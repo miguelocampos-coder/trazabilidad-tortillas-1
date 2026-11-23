@@ -1,0 +1,2988 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <title>KW-TRAZ-F-001 | Trazabilidad, Alérgenos y Cernido - KW Tortillería Industrial</title>
+  <style>
+    /* ==========================================================================
+       1. VARIABLES CORPORATIVAS Y SISTEMA DE DISEÑO (CSS PURO AUTOCONTENIDO)
+       ========================================================================== */
+    :root {
+      --brand-primary: #0033A0;
+      --brand-primary-dark: #001F66;
+      --brand-primary-light: #EBF1FA;
+      --brand-accent: #E31837;
+      --brand-accent-dark: #B01028;
+      --brand-accent-light: #FDECEF;
+
+      --bg-page: #F1F5F9;
+      --bg-card: #FFFFFF;
+      --text-main: #0F172A;
+      --text-muted: #475569;
+      --border-color: #CBD5E1;
+
+      /* Estados operativos */
+      --ok-bg: #DCFCE7;
+      --ok-border: #16A34A;
+      --ok-text: #14532D;
+
+      --warn-bg: #FEF3C7;
+      --warn-border: #D97706;
+      --warn-text: #78350F;
+
+      --danger-bg: #FEE2E2;
+      --danger-border: #DC2626;
+      --danger-text: #7F1D1D;
+
+      --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.08);
+      --shadow-md: 0 4px 14px rgba(0, 51, 160, 0.10);
+      --shadow-lg: 0 12px 28px rgba(15, 23, 42, 0.22);
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 14px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg-page);
+      color: var(--text-main);
+      line-height: 1.4;
+      padding-bottom: 48px;
+    }
+
+    .app-container {
+      max-width: 1520px;
+      margin: 0 auto;
+      padding: 10px;
+    }
+
+    /* ==========================================================================
+       2. BARRA SUPERIOR DE CONEXIÓN EN TIEMPO REAL Y GOOGLE SITES
+       ========================================================================== */
+    .live-topbar {
+      background: var(--brand-primary-dark);
+      color: #FFFFFF;
+      border-radius: var(--radius-md);
+      padding: 8px 14px;
+      margin-bottom: 10px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .live-status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 800;
+      padding: 5px 12px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+    }
+
+    .pulse-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #F59E0B;
+      display: inline-block;
+    }
+
+    .live-status-pill.is-live .pulse-dot {
+      background: #22C55E;
+      box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
+      animation: pulseLive 1.8s infinite;
+    }
+
+    @keyframes pulseLive {
+      0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.75); }
+      70% { box-shadow: 0 0 0 8px rgba(34, 197, 94, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+    }
+
+    .live-topbar-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .btn-topbar {
+      min-height: 36px;
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+      border: none;
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: transform 0.1s, opacity 0.15s;
+    }
+
+    .btn-topbar:active { transform: scale(0.97); }
+    .btn-quality-share { background: #16A34A; color: #FFFFFF; }
+    .btn-gsites-cfg { background: #FFFFFF; color: var(--brand-primary-dark); }
+
+    /* ==========================================================================
+       3. BANNERS DE ALERTA INMEDIATA (ALÉRGENOS Y HALLAZGOS DE CERNIDO)
+       ========================================================================== */
+    .critical-alerts-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .alert-banner {
+      border-radius: var(--radius-md);
+      padding: 12px 16px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: var(--shadow-md);
+      animation: alertSlide 0.25s ease-out;
+    }
+
+    @keyframes alertSlide {
+      from { transform: translateY(-6px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .alert-banner.allergen-active {
+      background: linear-gradient(90deg, #991B1B, #DC2626);
+      color: #FFFFFF;
+      border: 2px solid #FCA5A5;
+    }
+
+    .alert-banner.sifting-finding {
+      background: linear-gradient(90deg, #92400E, #D97706);
+      color: #FFFFFF;
+      border: 2px solid #FDE68A;
+    }
+
+    .alert-banner-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex: 1;
+      min-width: 250px;
+    }
+
+    .alert-icon-big {
+      font-size: 26px;
+      line-height: 1;
+    }
+
+    .alert-banner-title {
+      font-size: 14px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    .alert-banner-desc {
+      font-size: 12.5px;
+      opacity: 0.95;
+      margin-top: 2px;
+    }
+
+    .btn-banner-verify {
+      min-height: 40px;
+      padding: 8px 16px;
+      background: #FFFFFF;
+      color: #991B1B;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-size: 12.5px;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* ==========================================================================
+       4. ENCABEZADO OFICIAL FORMATO KW-TRAZ-F-001
+       ========================================================================== */
+    .official-header {
+      background: var(--bg-card);
+      border: 2px solid var(--brand-primary);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-md);
+      overflow: hidden;
+      margin-bottom: 12px;
+    }
+
+    .header-top-grid {
+      display: grid;
+      grid-template-columns: 205px 1fr 205px;
+      border-bottom: 2px solid var(--brand-primary);
+    }
+
+    .brand-box {
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border-right: 2px solid var(--brand-primary);
+      background: #FFFFFF;
+      text-align: center;
+    }
+
+    .kw-logo-svg {
+      width: 142px;
+      height: auto;
+      margin-bottom: 4px;
+    }
+
+    .brand-company {
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--brand-primary);
+    }
+
+    .brand-plant {
+      display: inline-block;
+      margin-top: 3px;
+      background: var(--brand-primary);
+      color: #FFFFFF;
+      font-size: 10px;
+      font-weight: 800;
+      padding: 2px 9px;
+      border-radius: 999px;
+      text-transform: uppercase;
+    }
+
+    .title-box {
+      padding: 10px 14px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .doc-main-title {
+      font-size: 15px;
+      font-weight: 900;
+      color: var(--brand-primary);
+      letter-spacing: 0.4px;
+      text-transform: uppercase;
+    }
+
+    .doc-line-title {
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--brand-accent);
+      margin: 2px 0 6px 0;
+      text-transform: uppercase;
+    }
+
+    .doc-skus {
+      font-size: 10.5px;
+      font-weight: 600;
+      color: var(--text-main);
+      background: var(--brand-primary-light);
+      padding: 6px 10px;
+      border-radius: var(--radius-sm);
+      line-height: 1.35;
+    }
+
+    .meta-box {
+      border-left: 2px solid var(--brand-primary);
+      display: grid;
+      grid-template-rows: auto auto auto 1fr;
+      font-size: 11px;
+      text-align: center;
+    }
+
+    .meta-label-top {
+      background: var(--brand-primary);
+      color: #FFFFFF;
+      font-weight: 800;
+      padding: 4px;
+      letter-spacing: 0.5px;
+    }
+
+    .meta-code-val {
+      font-weight: 900;
+      font-size: 13px;
+      color: var(--brand-primary);
+      padding: 6px 4px;
+      border-bottom: 1px solid var(--brand-primary);
+      background: #F8FAFC;
+    }
+
+    .meta-sub-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      border-bottom: 1px solid var(--brand-primary);
+      background: #E2E8F0;
+      font-weight: 800;
+      font-size: 10px;
+    }
+
+    .meta-sub-grid div { padding: 4px; }
+    .meta-sub-grid div:first-child { border-right: 1px solid var(--brand-primary); }
+
+    .meta-sub-vals {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      font-weight: 800;
+      font-size: 12px;
+    }
+
+    .meta-sub-vals div { padding: 6px 4px; }
+    .meta-sub-vals div:first-child { border-right: 1px solid var(--brand-primary); }
+
+    /* Barra de controles táctiles */
+    .controls-bar {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(195px, 1fr));
+      gap: 10px;
+      padding: 12px;
+      background: #F8FAFC;
+      align-items: end;
+    }
+
+    .control-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .control-group label {
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--brand-primary);
+      text-transform: uppercase;
+    }
+
+    .touch-input, .touch-select {
+      width: 100%;
+      min-height: 42px;
+      padding: 8px 10px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-main);
+      background: #FFFFFF;
+      border: 1.5px solid var(--border-color);
+      border-radius: var(--radius-sm);
+    }
+
+    .touch-input:focus, .touch-select:focus {
+      outline: none;
+      border-color: var(--brand-primary);
+      box-shadow: 0 0 0 3px rgba(0, 51, 160, 0.15);
+    }
+
+    .week-nav-wrapper {
+      display: flex;
+      gap: 5px;
+      align-items: center;
+    }
+
+    .btn-icon-nav {
+      min-width: 42px;
+      min-height: 42px;
+      background: var(--brand-primary);
+      color: #FFFFFF;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-weight: 900;
+      font-size: 15px;
+      cursor: pointer;
+    }
+
+    /* ==========================================================================
+       5. PANEL DE ALÉRGENOS (SOYA, LECHE, NUEZ) + AUTOMATIZACIÓN RÁPIDA
+       ========================================================================== */
+    .quick-ops-panel {
+      display: grid;
+      grid-template-columns: 1.3fr 1fr;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .panel-card {
+      background: var(--bg-card);
+      border: 1.5px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .panel-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .panel-card-title {
+      font-size: 12px;
+      font-weight: 900;
+      color: var(--brand-primary);
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    .allergen-buttons-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .btn-allergen {
+      min-height: 46px;
+      padding: 8px 10px;
+      border-radius: var(--radius-sm);
+      border: 2px solid #FCA5A5;
+      background: #FEF2F2;
+      color: #991B1B;
+      font-weight: 900;
+      font-size: 12.5px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+    }
+
+    .btn-allergen small {
+      font-size: 10px;
+      font-weight: 700;
+      opacity: 0.85;
+    }
+
+    .btn-allergen.active-alert {
+      background: #DC2626;
+      color: #FFFFFF;
+      border-color: #7F1D1D;
+      box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.25);
+    }
+
+    .btn-allergen.verified-ok {
+      background: var(--ok-bg);
+      color: var(--ok-text);
+      border-color: var(--ok-border);
+    }
+
+    .auto-copy-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .btn-auto-copy-day {
+      flex: 1;
+      min-height: 46px;
+      padding: 8px 14px;
+      background: linear-gradient(135deg, var(--brand-primary), #0052CC);
+      color: #FFFFFF;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-weight: 900;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .btn-auto-copy-day:active { transform: scale(0.98); }
+
+    /* ==========================================================================
+       6. TARJETAS KPI EN TIEMPO REAL
+       ========================================================================== */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .kpi-card {
+      background: var(--bg-card);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow-sm);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .kpi-card::before {
+      content: "";
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 5px;
+      background: var(--brand-primary);
+    }
+
+    .kpi-card.kpi-green::before { background: var(--ok-border); }
+    .kpi-card.kpi-red::before { background: var(--danger-border); }
+    .kpi-card.kpi-amber::before { background: var(--warn-border); }
+
+    .kpi-title {
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    .kpi-value {
+      font-size: 23px;
+      font-weight: 900;
+      color: var(--brand-primary);
+      margin: 4px 0;
+    }
+
+    .kpi-sub {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 7px;
+      background: #E2E8F0;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-top: 6px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--brand-primary), #16A34A);
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    /* ==========================================================================
+       7. BARRA DE HERRAMIENTAS DE FILTRO Y EXPORTACIÓN
+       ========================================================================== */
+    .toolbar {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 10px 12px;
+      margin-bottom: 12px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .toolbar-left {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      flex: 1;
+    }
+
+    .search-input {
+      min-height: 40px;
+      padding: 6px 12px;
+      border: 1.5px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-weight: 600;
+      min-width: 220px;
+    }
+
+    .legend-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 8px;
+      border-radius: 999px;
+    }
+
+    .toolbar-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .btn-action {
+      min-height: 40px;
+      padding: 8px 13px;
+      border-radius: var(--radius-sm);
+      font-size: 12px;
+      font-weight: 800;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-add-rm { background: var(--brand-primary-light); color: var(--brand-primary); border: 1.5px solid var(--brand-primary); }
+    .btn-csv { background: #15803D; color: #FFFFFF; }
+    .btn-print { background: var(--brand-accent); color: #FFFFFF; }
+    .btn-clear { background: #E2E8F0; color: #334155; }
+
+    /* ==========================================================================
+       8. MATRIZ DE TRAZABILIDAD Y CERNIDO (ESCRITORIO / TABLET)
+       ========================================================================== */
+    .matrix-wrapper {
+      background: var(--bg-card);
+      border: 2px solid var(--brand-primary);
+      border-radius: var(--radius-md);
+      overflow-x: auto;
+      box-shadow: var(--shadow-md);
+    }
+
+    .trace-table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 1120px;
+    }
+
+    .trace-table th, .trace-table td {
+      border: 1px solid #94A3B8;
+      vertical-align: middle;
+    }
+
+    .trace-table thead th {
+      background: var(--brand-primary);
+      color: #FFFFFF;
+      padding: 7px 6px;
+      text-align: center;
+      font-size: 11.5px;
+      font-weight: 800;
+    }
+
+    .trace-table thead tr.sub-header th {
+      background: #E2E8F0;
+      color: var(--brand-primary-dark);
+      font-size: 10px;
+      padding: 4px;
+      border-bottom: 2px solid var(--brand-primary);
+    }
+
+    .col-formula {
+      position: sticky;
+      left: 0;
+      z-index: 2;
+      background: #F1F5F9 !important;
+      color: var(--brand-primary-dark) !important;
+      width: 195px;
+      min-width: 195px;
+      text-align: left !important;
+      padding: 8px 10px !important;
+      font-weight: 800;
+      font-size: 12px;
+      border-right: 2px solid var(--brand-primary) !important;
+    }
+
+    .trace-table thead .col-formula {
+      background: var(--brand-primary-dark) !important;
+      color: #FFFFFF !important;
+      z-index: 3;
+    }
+
+    .allergen-tag-inline {
+      display: inline-block;
+      margin-top: 3px;
+      background: #DC2626;
+      color: #FFFFFF;
+      font-size: 9px;
+      font-weight: 900;
+      padding: 1px 6px;
+      border-radius: 4px;
+      letter-spacing: 0.4px;
+    }
+
+    .day-date-pill {
+      display: block;
+      background: #FFFFFF;
+      color: var(--brand-primary);
+      border-radius: 4px;
+      padding: 2px 6px;
+      font-size: 11px;
+      font-weight: 900;
+      margin-bottom: 2px;
+    }
+
+    .trace-cell {
+      padding: 5px;
+      min-width: 132px;
+      cursor: pointer;
+      transition: box-shadow 0.15s;
+    }
+
+    .trace-cell:hover {
+      box-shadow: inset 0 0 0 2px var(--brand-primary);
+    }
+
+    .cell-pending { background: #F8FAFC; }
+    .cell-ok { background: var(--ok-bg); }
+    .cell-change { background: var(--warn-bg); }
+    .cell-finding { background: var(--danger-bg); border: 1.5px solid var(--danger-border) !important; }
+
+    .cell-slots {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .slot-line {
+      font-size: 10.5px;
+      padding: 2px 5px;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.85);
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      min-height: 20px;
+    }
+
+    .slot-tag {
+      font-size: 9px;
+      font-weight: 800;
+      color: var(--text-muted);
+    }
+
+    .slot-val {
+      font-weight: 800;
+      color: var(--text-main);
+      max-width: 84px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .sift-pill-ok {
+      background: #16A34A;
+      color: #FFFFFF;
+      font-size: 9px;
+      font-weight: 900;
+      padding: 1px 5px;
+      border-radius: 3px;
+    }
+
+    .sift-pill-finding {
+      background: #DC2626;
+      color: #FFFFFF;
+      font-size: 9px;
+      font-weight: 900;
+      padding: 1px 5px;
+      border-radius: 3px;
+    }
+
+    .cell-footer-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 4px;
+      gap: 4px;
+    }
+
+    .btn-mini-cell {
+      font-size: 9.5px;
+      font-weight: 800;
+      background: #FFFFFF;
+      color: var(--brand-primary);
+      border: 1px solid var(--brand-primary);
+      border-radius: 4px;
+      padding: 2px 5px;
+      cursor: pointer;
+    }
+
+    .btn-mini-cell:hover {
+      background: var(--brand-primary);
+      color: #FFFFFF;
+    }
+
+    /* ==========================================================================
+       9. VISTA DE TARJETAS TÁCTILES PARA MÓVILES (< 860px)
+       ========================================================================== */
+    .mobile-cards-container {
+      display: none;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .mobile-day-selector {
+      display: flex;
+      overflow-x: auto;
+      gap: 6px;
+      padding-bottom: 4px;
+    }
+
+    .mobile-day-tab {
+      flex: 0 0 auto;
+      min-width: 90px;
+      padding: 8px 10px;
+      border-radius: var(--radius-sm);
+      border: 1.5px solid var(--border-color);
+      background: #FFFFFF;
+      text-align: center;
+      cursor: pointer;
+    }
+
+    .mobile-day-tab.active {
+      background: var(--brand-primary);
+      color: #FFFFFF;
+      border-color: var(--brand-primary);
+    }
+
+    .mobile-rm-card {
+      background: #FFFFFF;
+      border-radius: var(--radius-md);
+      border: 1.5px solid var(--border-color);
+      padding: 12px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .mobile-rm-card.card-ok { border-left: 6px solid var(--ok-border); }
+    .mobile-rm-card.card-change { border-left: 6px solid var(--warn-border); }
+    .mobile-rm-card.card-finding { border-left: 6px solid var(--danger-border); background: #FEF2F2; }
+
+    .mobile-rm-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      gap: 6px;
+    }
+
+    .mobile-rm-title {
+      font-size: 14px;
+      font-weight: 900;
+      color: var(--brand-primary);
+    }
+
+    .mobile-rm-body {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .mobile-field-box {
+      background: #F1F5F9;
+      padding: 6px 8px;
+      border-radius: 6px;
+    }
+
+    .mobile-field-box span {
+      display: block;
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--text-muted);
+    }
+
+    .mobile-field-box strong {
+      font-size: 12.5px;
+      color: var(--text-main);
+    }
+
+    .mobile-rm-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn-mobile-edit {
+      flex: 1;
+      min-height: 42px;
+      background: var(--brand-primary);
+      color: #FFFFFF;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-weight: 800;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    .btn-mobile-copy {
+      min-height: 42px;
+      padding: 0 12px;
+      background: #FFFFFF;
+      color: var(--brand-primary);
+      border: 1.5px solid var(--brand-primary);
+      border-radius: var(--radius-sm);
+      font-weight: 800;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    /* ==========================================================================
+       10. MODALES TÁCTILES (EDICIÓN, ALÉRGENOS POES, CALIDAD / GOOGLE SITES)
+       ========================================================================== */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.68);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 12px;
+      z-index: 1000;
+      overflow-y: auto;
+    }
+
+    .modal-backdrop.open { display: flex; }
+
+    .modal-dialog {
+      background: #FFFFFF;
+      width: 100%;
+      max-width: 520px;
+      border-radius: var(--radius-lg);
+      border: 2px solid var(--brand-primary);
+      box-shadow: var(--shadow-lg);
+      overflow: hidden;
+      max-height: 92vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .modal-dialog > form {
+      display: flex;
+      flex-direction: column;
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    .modal-header {
+      background: var(--brand-primary);
+      color: #FFFFFF;
+      padding: 13px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-shrink: 0;
+    }
+
+    .modal-header.danger-hdr { background: #B91C1C; }
+    .modal-header h3 { font-size: 15px; font-weight: 900; }
+    .modal-subtitle { font-size: 11.5px; color: #E2E8F0; margin-top: 2px; }
+
+    .btn-close-modal {
+      background: rgba(255, 255, 255, 0.18);
+      border: none;
+      color: #FFFFFF;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      font-size: 18px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .modal-body {
+      padding: 15px;
+      display: flex;
+      flex-direction: column;
+      gap: 11px;
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      scrollbar-width: thin;
+      scrollbar-color: var(--brand-primary) #E2E8F0;
+    }
+
+    .modal-body::-webkit-scrollbar {
+      width: 8px;
+    }
+    .modal-body::-webkit-scrollbar-track {
+      background: #E2E8F0;
+      border-radius: 4px;
+    }
+    .modal-body::-webkit-scrollbar-thumb {
+      background: var(--brand-primary);
+      border-radius: 4px;
+    }
+
+    .sifting-box {
+      background: #F8FAFC;
+      border: 1.5px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      padding: 10px 12px;
+    }
+
+    .sifting-radio-group {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      margin-top: 6px;
+    }
+
+    .sift-option-btn {
+      min-height: 40px;
+      border-radius: var(--radius-sm);
+      border: 1.5px solid var(--border-color);
+      background: #FFFFFF;
+      font-size: 11.5px;
+      font-weight: 800;
+      cursor: pointer;
+      padding: 4px 6px;
+    }
+
+    .sift-option-btn.selected-ok {
+      background: var(--ok-bg);
+      border-color: var(--ok-border);
+      color: var(--ok-text);
+    }
+
+    .sift-option-btn.selected-finding {
+      background: var(--danger-bg);
+      border-color: var(--danger-border);
+      color: var(--danger-text);
+    }
+
+    .sift-option-btn.selected-pending {
+      background: #E2E8F0;
+      border-color: #64748B;
+      color: #1E293B;
+    }
+
+    .finding-details-box {
+      display: none;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 10px;
+      padding: 10px;
+      background: #FEF2F2;
+      border: 1.5px solid #DC2626;
+      border-radius: var(--radius-sm);
+    }
+
+    .finding-details-box.visible { display: flex; }
+
+    .toggle-change-box {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--warn-bg);
+      border: 1.5px solid var(--warn-border);
+      padding: 9px 12px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+    }
+
+    .toggle-change-box span { font-size: 12.5px; font-weight: 800; color: var(--warn-text); }
+    .toggle-change-box input { width: 20px; height: 20px; accent-color: var(--warn-border); }
+
+    .lot2-section {
+      display: none;
+      flex-direction: column;
+      gap: 8px;
+      padding: 10px;
+      background: #FFFBEB;
+      border: 1.5px dashed var(--warn-border);
+      border-radius: var(--radius-sm);
+    }
+
+    .lot2-section.visible { display: flex; }
+
+    .propagate-check-box {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--brand-primary-light);
+      border: 1.5px solid var(--brand-primary);
+      padding: 9px 12px;
+      border-radius: var(--radius-sm);
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--brand-primary);
+      cursor: pointer;
+    }
+
+    .propagate-check-box input { width: 19px; height: 19px; accent-color: var(--brand-primary); }
+
+    .checklist-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      background: #FEF2F2;
+      border: 1px solid #FECACA;
+      padding: 9px 10px;
+      border-radius: var(--radius-sm);
+      font-size: 12.5px;
+      font-weight: 700;
+      color: #7F1D1D;
+    }
+
+    .checklist-item input { width: 20px; height: 20px; margin-top: 1px; accent-color: #DC2626; }
+
+    .code-snippet-box {
+      background: #0F172A;
+      color: #38BDF8;
+      font-family: monospace;
+      font-size: 11px;
+      padding: 10px;
+      border-radius: var(--radius-sm);
+      overflow-x: auto;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+    .modal-footer {
+      padding: 11px 15px;
+      background: #F8FAFC;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+      flex-shrink: 0;
+    }
+
+    .btn-modal {
+      min-height: 42px;
+      padding: 8px 14px;
+      border-radius: var(--radius-sm);
+      font-weight: 800;
+      font-size: 13px;
+      border: none;
+      cursor: pointer;
+    }
+
+    .btn-modal-save { background: var(--brand-primary); color: #FFFFFF; flex: 1; }
+    .btn-modal-delete { background: var(--brand-accent-light); color: var(--brand-accent); border: 1px solid var(--brand-accent); }
+    .btn-modal-cancel { background: #E2E8F0; color: #334155; }
+
+    /* Pie de firmas y Toast */
+    .signatures-footer {
+      margin-top: 14px;
+      background: #FFFFFF;
+      border: 2px solid var(--brand-primary);
+      border-radius: var(--radius-md);
+      padding: 14px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .sig-box {
+      border-top: 1.5px solid var(--text-main);
+      margin-top: 26px;
+      padding-top: 6px;
+      text-align: center;
+      font-size: 11.5px;
+    }
+
+    .sig-box strong { display: block; color: var(--brand-primary); font-size: 12px; }
+
+    .toast-msg {
+      position: fixed;
+      bottom: 18px;
+      right: 18px;
+      background: var(--brand-primary-dark);
+      color: #FFFFFF;
+      padding: 12px 18px;
+      border-radius: var(--radius-md);
+      font-size: 13px;
+      font-weight: 700;
+      box-shadow: var(--shadow-lg);
+      z-index: 2000;
+      opacity: 0;
+      transform: translateY(15px);
+      pointer-events: none;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+
+    .toast-msg.show { opacity: 1; transform: translateY(0); }
+
+    /* ==========================================================================
+       11. RESPONSIVE BREAKPOINTS
+       ========================================================================== */
+    @media (max-width: 1024px) {
+      .header-top-grid { grid-template-columns: 165px 1fr 180px; }
+      .quick-ops-panel { grid-template-columns: 1fr; }
+      .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 860px) {
+      .header-top-grid { grid-template-columns: 1fr; }
+      .brand-box { border-right: none; border-bottom: 2px solid var(--brand-primary); }
+      .meta-box { border-left: none; border-top: 2px solid var(--brand-primary); }
+      .matrix-wrapper { display: none; }
+      .mobile-cards-container { display: flex; }
+      .signatures-footer { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 520px) {
+      .kpi-grid { grid-template-columns: 1fr; }
+      .allergen-buttons-row { grid-template-columns: 1fr; }
+    }
+
+    /* ==========================================================================
+       12. ESTILOS DE IMPRESIÓN OFICIAL (@media print -> FORMATO KW-TRAZ-F-001)
+       ========================================================================== */
+    @media print {
+      @page { size: landscape; margin: 7mm; }
+      body { background: #FFFFFF !important; padding: 0; color: #000000 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .app-container { max-width: 100%; padding: 0; }
+      .live-topbar, .quick-ops-panel, .kpi-grid, .toolbar, .mobile-cards-container,
+      .btn-icon-nav, .btn-mini-cell, .modal-backdrop, .toast-msg { display: none !important; }
+      .matrix-wrapper { display: block !important; overflow: visible !important; box-shadow: none !important; border: 1.5px solid #000 !important; }
+      .official-header { box-shadow: none !important; border: 1.5px solid #000 !important; margin-bottom: 6px; }
+      .header-top-grid { grid-template-columns: 170px 1fr 180px !important; border-bottom: 1.5px solid #000 !important; }
+      .brand-box { border-right: 1.5px solid #000 !important; border-bottom: none !important; }
+      .meta-box { border-left: 1.5px solid #000 !important; border-top: none !important; }
+      .controls-bar { padding: 5px 8px; background: #FFF !important; grid-template-columns: repeat(5, 1fr) !important; }
+      .touch-input, .touch-select { border: none !important; border-bottom: 1px solid #000 !important; border-radius: 0 !important; min-height: 22px !important; padding: 1px 4px !important; font-size: 10.5px !important; appearance: none; }
+      .trace-table { min-width: 100% !important; font-size: 9px !important; }
+      .trace-table th, .trace-table td { border: 1px solid #000 !important; }
+      .trace-cell { padding: 2px !important; min-width: auto !important; }
+      .slot-line { padding: 1px 2px !important; min-height: 14px !important; font-size: 8.5px !important; border: 0.5px solid #64748B !important; }
+      .signatures-footer { display: grid !important; grid-template-columns: repeat(3, 1fr) !important; border: 1.5px solid #000 !important; margin-top: 6px; padding: 6px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="app-container">
+
+  <!-- ========================================================================
+       1. BARRA SUPERIOR EN VIVO (SINCRONIZACIÓN CALIDAD Y GOOGLE SITES)
+       ======================================================================== -->
+  <div class="live-topbar">
+    <div class="live-status-pill" id="liveConnectionBadge">
+      <span class="pulse-dot"></span>
+      <span id="liveConnectionText">Modo Local (Respaldo Activo — Configure Nube para En Vivo)</span>
+    </div>
+
+    <div class="live-topbar-actions">
+      <button type="button" class="btn-topbar btn-quality-share" id="openQualityReportBtn">
+        &#128228; Compartir Reporte en Tiempo Real con Oficina de Calidad
+      </button>
+      <button type="button" class="btn-topbar btn-gsites-cfg" id="openCloudConfigBtn">
+        &#9881; Configuración Nube / Google Sites
+      </button>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       2. BANNERS DE ALERTA INMEDIATA (ALÉRGENOS Y HALLAZGOS DE CERNIDO)
+       ======================================================================== -->
+  <div class="critical-alerts-stack" id="criticalAlertsContainer"></div>
+
+  <!-- ========================================================================
+       3. ENCABEZADO OFICIAL FORMATO KW-TRAZ-F-001
+       ======================================================================== -->
+  <header class="official-header">
+    <div class="header-top-grid">
+      <div class="brand-box">
+        <svg class="kw-logo-svg" viewBox="0 0 220 82" xmlns="http://www.w3.org/2000/svg" aria-label="Logo KW Tortillería Industrial">
+          <rect x="6" y="6" width="208" height="52" rx="14" fill="#FFFFFF" stroke="#0033A0" stroke-width="5"/>
+          <rect x="12" y="12" width="196" height="40" rx="10" fill="#FFFFFF" stroke="#E31837" stroke-width="2.5"/>
+          <text x="110" y="42" text-anchor="middle" font-family="Arial Black, Impact, sans-serif" font-weight="900" font-size="31" fill="#0033A0" letter-spacing="3">KW</text>
+          <text x="110" y="73" text-anchor="middle" font-family="Arial, sans-serif" font-weight="800" font-size="11" fill="#E31837" letter-spacing="0.5">TORTILLERÍA INDUSTRIAL</text>
+        </svg>
+        <div class="brand-company">KW Tortillería Industrial</div>
+        <span class="brand-plant">Planta Principal</span>
+      </div>
+
+      <div class="title-box">
+        <div class="doc-main-title">CONTROL DE PESADAS EN DOSIFICACIÓN PARA TRAZABILIDAD</div>
+        <div class="doc-line-title">LÍNEA: TORTILLAS INDUSTRIALES</div>
+        <div class="doc-skus">
+          TORTILLAS BLANCAS 8P 240g, TORTILLAS BLANCAS 12P 360g, TORTILLAS BLANCAS 15P 450g,
+          TORTILLAS BLANCAS 10P 425g, TORTILLAS 20P 580g, TORTILLAS 22P 660g,
+          TORTILLAS BLANCAS 20P 1400g, TORTILLAS ESPECIALES 360g, TORTILLAS INTEGRALES 8P 250g.
+        </div>
+      </div>
+
+      <div class="meta-box">
+        <div class="meta-label-top">CÓDIGO</div>
+        <div class="meta-code-val">KW-TRAZ-F-001</div>
+        <div class="meta-sub-grid">
+          <div>VERSIÓN</div>
+          <div>PÁGINA</div>
+        </div>
+        <div class="meta-sub-vals">
+          <div>1</div>
+          <div>1 de 1</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Barra de Controles de Turno y Día Activo -->
+    <div class="controls-bar">
+      <div class="control-group">
+        <label for="weekStartInput">Semana (Domingo a Sábado)</label>
+        <div class="week-nav-wrapper">
+          <button type="button" class="btn-icon-nav" id="prevWeekBtn" title="Semana Anterior">&#9664;</button>
+          <input type="date" id="weekStartInput" class="touch-input">
+          <button type="button" class="btn-icon-nav" id="nextWeekBtn" title="Semana Siguiente">&#9654;</button>
+        </div>
+      </div>
+
+      <div class="control-group">
+        <label for="activeDaySelect">Día Activo en Turno</label>
+        <select id="activeDaySelect" class="touch-select"></select>
+      </div>
+
+      <div class="control-group">
+        <label for="operatorSelect">Operador Dosificación</label>
+        <select id="operatorSelect" class="touch-select">
+          <option value="">-- Seleccionar Operador --</option>
+          <option value="Operador 1">Operador 1</option>
+          <option value="Operador 2">Operador 2</option>
+          <option value="Operador 3">Operador 3</option>
+          <option value="Operador 4">Operador 4</option>
+          <option value="Operador 5">Operador 5</option>
+        </select>
+      </div>
+
+      <div class="control-group">
+        <label for="sanitizerSelect">Sanitizador / Auxiliar</label>
+        <select id="sanitizerSelect" class="touch-select">
+          <option value="">-- Seleccionar Auxiliar --</option>
+          <option value="Auxiliar 1">Auxiliar 1</option>
+          <option value="Auxiliar 2">Auxiliar 2</option>
+          <option value="Auxiliar 3">Auxiliar 3</option>
+        </select>
+      </div>
+
+      <div class="control-group">
+        <label for="supervisorSelect">Supervisor de Calidad</label>
+        <select id="supervisorSelect" class="touch-select">
+          <option value="">-- Seleccionar Supervisor --</option>
+          <option value="Supervisor 1">Supervisor 1</option>
+          <option value="Supervisor 2">Supervisor 2</option>
+          <option value="Supervisor 3">Supervisor 3</option>
+        </select>
+      </div>
+    </div>
+  </header>
+
+  <!-- ========================================================================
+       4. PANEL DE ALÉRGENOS INMEDIATOS Y AUTOMATIZACIÓN DE LOTES
+       ======================================================================== -->
+  <section class="quick-ops-panel">
+    <!-- Control Inmediato de Alérgenos POES -->
+    <div class="panel-card" style="border-color: #FCA5A5;">
+      <div class="panel-card-header">
+        <span class="panel-card-title" style="color: #991B1B;">&#9888; Protocolo Inmediato Limpieza de Alérgenos (POES)</span>
+        <span style="font-size: 11px; font-weight: 700; color: #64748B;">Toque para activar/verificar limpieza</span>
+      </div>
+      <div class="allergen-buttons-row">
+        <button type="button" class="btn-allergen" id="btnAllergenSoya" data-allergen="SOYA">
+          <span>&#9888; ALÉRGENO SOYA</span>
+          <small id="statusAllergenSoya">Sin alerta activa</small>
+        </button>
+        <button type="button" class="btn-allergen" id="btnAllergenLeche" data-allergen="LECHE">
+          <span>&#9888; ALÉRGENO LECHE</span>
+          <small id="statusAllergenLeche">Sin alerta activa</small>
+        </button>
+        <button type="button" class="btn-allergen" id="btnAllergenNuez" data-allergen="NUEZ">
+          <span>&#9888; ALÉRGENO NUEZ</span>
+          <small id="statusAllergenNuez">Sin alerta activa</small>
+        </button>
+      </div>
+    </div>
+
+    <!-- Automatización de Turno sin Retrabajo -->
+    <div class="panel-card" style="border-color: #93C5FD;">
+      <div class="panel-card-header">
+        <span class="panel-card-title">&#9889; Automatización Rápida de Turno</span>
+        <span style="font-size: 11px; font-weight: 700; color: #64748B;">Cero digitación repetida</span>
+      </div>
+      <div class="auto-copy-row">
+        <button type="button" class="btn-auto-copy-day" id="btnCopyAllPreviousDay">
+          &#9889; Copiar Lotes del Día Anterior al Día Activo
+        </button>
+      </div>
+      <div style="font-size: 11px; color: var(--text-muted); margin-top: 6px; font-weight: 600;">
+        Copia lotes, fechas de recepción y estado de cernido del día previo en 1 segundo. Luego edite solo si cambió algún lote.
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       5. INDICADORES KPI EN TIEMPO REAL
+       ======================================================================== -->
+  <section class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-title">Cumplimiento Trazabilidad</div>
+      <div class="kpi-value" id="kpiPercent">0%</div>
+      <div class="progress-track"><div class="progress-fill" id="kpiProgressBar"></div></div>
+      <div class="kpi-sub" id="kpiCellsDetail" style="margin-top: 5px;">0 de 63 celdas completadas</div>
+    </div>
+
+    <div class="kpi-card kpi-green">
+      <div class="kpi-title">Control de Cernido (Malla)</div>
+      <div class="kpi-value" id="kpiSiftingSummary" style="color: #15803D;">0 OK / 0 Hallazgos</div>
+      <div class="kpi-sub" id="kpiSiftingSub">Tamizado de materias primas en turno</div>
+    </div>
+
+    <div class="kpi-card kpi-red">
+      <div class="kpi-title">Alertas Alérgenos (POES)</div>
+      <div class="kpi-value" id="kpiAllergensCount" style="color: #B91C1C;">0 Activas</div>
+      <div class="kpi-sub" id="kpiAllergensSub">Soya / Leche / Nuez monitoreados</div>
+    </div>
+
+    <div class="kpi-card kpi-amber">
+      <div class="kpi-title">Cambios de Lote en Semana</div>
+      <div class="kpi-value" id="kpiLotChanges" style="color: #B45309;">0</div>
+      <div class="kpi-sub">Registros con cambio de lote (L1 &rarr; L2)</div>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       6. BARRA DE HERRAMIENTAS DE FILTRO Y EXPORTACIÓN
+       ======================================================================== -->
+  <section class="toolbar">
+    <div class="toolbar-left">
+      <input type="search" id="searchMaterialInput" class="search-input" placeholder="Buscar materia prima (ej. HARINA, LECHE)...">
+      <div class="legend-pills">
+        <span class="legend-item" style="background: var(--ok-bg); color: var(--ok-text);">&#10004; Cernido OK</span>
+        <span class="legend-item" style="background: var(--warn-bg); color: var(--warn-text);">&#8644; Cambio Lote</span>
+        <span class="legend-item" style="background: var(--danger-bg); color: var(--danger-text);">&#9888; Hallazgo Cernido</span>
+      </div>
+    </div>
+
+    <div class="toolbar-actions">
+      <button type="button" class="btn-action btn-add-rm" id="openAddIngredientBtn">+ Agregar Ingrediente</button>
+      <button type="button" class="btn-action btn-csv" id="exportCsvBtn">&#128202; Exportar Excel (Columnas)</button>
+      <button type="button" class="btn-action btn-print" id="printPdfBtn">&#128424; Imprimir / PDF Oficial</button>
+      <button type="button" class="btn-action btn-clear" id="resetWeekBtn">&#128465; Limpiar Semana</button>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       7. MATRIZ DE TRAZABILIDAD Y CERNIDO (ESCRITORIO / TABLET)
+       ======================================================================== -->
+  <div class="matrix-wrapper">
+    <table class="trace-table" id="traceabilityTable">
+      <thead>
+        <tr id="tableDaysHeaderRow">
+          <th class="col-formula" rowspan="2">FÓRMULA / MATERIA PRIMA</th>
+        </tr>
+        <tr class="sub-header" id="tableSubHeaderRow"></tr>
+      </thead>
+      <tbody id="traceabilityBody"></tbody>
+    </table>
+  </div>
+
+  <!-- ========================================================================
+       8. VISTA TÁCTIL POR DÍA PARA MÓVILES
+       ======================================================================== -->
+  <section class="mobile-cards-container" id="mobileCardsSection">
+    <div class="mobile-day-selector" id="mobileDayTabs"></div>
+    <div id="mobileCardsList" style="display:flex; flex-direction:column; gap:10px;"></div>
+  </section>
+
+  <!-- ========================================================================
+       9. PIE DE FIRMAS OFICIAL
+       ======================================================================== -->
+  <footer class="signatures-footer">
+    <div class="sig-box">
+      <strong id="sigOperatorName">Operador de Dosificación</strong>
+      <span>Elaboró / Pesaje y Cernido en Dosificación</span>
+    </div>
+    <div class="sig-box">
+      <strong id="sigSanitizerName">Sanitizador / Auxiliar</strong>
+      <span>Limpieza POES / Alérgenos</span>
+    </div>
+    <div class="sig-box">
+      <strong id="sigSupervisorName">Supervisor de Calidad</strong>
+      <span>Verificó Trazabilidad (KW Tortillería Industrial)</span>
+    </div>
+  </footer>
+</div>
+
+<!-- ==========================================================================
+     MODAL 1: REGISTRO DE LOTE, PROPAGACIÓN SEMANAL Y CONTROL DE CERNIDO
+     ========================================================================== -->
+<div class="modal-backdrop" id="editModalBackdrop" role="dialog" aria-modal="true">
+  <div class="modal-dialog">
+    <div class="modal-header">
+      <div>
+        <h3 id="modalMaterialTitle">MATERIA PRIMA</h3>
+        <div class="modal-subtitle" id="modalDaySubtitle">Domingo - 09-ago-26</div>
+      </div>
+      <button type="button" class="btn-close-modal" id="closeModalBtn">&times;</button>
+    </div>
+
+    <form id="cellEditForm">
+      <div class="modal-body">
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+          <div class="control-group">
+            <label for="inputReceptionDate">Fecha de Recepción</label>
+            <input type="date" id="inputReceptionDate" class="touch-input" required>
+          </div>
+          <div class="control-group">
+            <label for="inputLot1">Lote Principal (L1)</label>
+            <input type="text" id="inputLot1" class="touch-input" placeholder="Ej. L261117-A" autocomplete="off" required>
+          </div>
+        </div>
+
+        <!-- Control de Cernido y Hallazgos -->
+        <div class="sifting-box">
+          <label style="font-size:11px; font-weight:900; color:var(--brand-primary); text-transform:uppercase;">
+            Control de Cernido de Materia Prima (Malla / Tamiz)
+          </label>
+          <div class="sifting-radio-group">
+            <button type="button" class="sift-option-btn selected-ok" data-sift="OK">&#10004; Cernido OK</button>
+            <button type="button" class="sift-option-btn" data-sift="HALLAZGO">&#9888; Hallazgo</button>
+            <button type="button" class="sift-option-btn" data-sift="PENDIENTE">&#9203; Pendiente</button>
+          </div>
+
+          <div class="finding-details-box" id="findingDetailsContainer">
+            <div class="control-group">
+              <label for="inputFindingType" style="color:#991B1B;">Tipo de Hallazgo en Cernido *</label>
+              <select id="inputFindingType" class="touch-select">
+                <option value="">-- Seleccione hallazgo --</option>
+                <option value="Grumos / Apelmazamiento">Grumos / Apelmazamiento</option>
+                <option value="Cuerpo extraño (plástico/hilo/metal)">Cuerpo extraño (plástico/hilo/metal)</option>
+                <option value="Rotura o desgaste en malla de tamiz">Rotura o desgaste en malla de tamiz</option>
+                <option value="Impurezas / Material retenido anormal">Impurezas / Material retenido anormal</option>
+                <option value="Infestación / Plaga">Infestación / Plaga</option>
+              </select>
+            </div>
+            <div class="control-group">
+              <label for="inputFindingAction" style="color:#991B1B;">Acción Inmediata Tomada *</label>
+              <input type="text" id="inputFindingAction" class="touch-input" placeholder="Ej. Retención de lote, cambio de malla y aviso a Calidad">
+            </div>
+          </div>
+        </div>
+
+        <!-- Cambio de Lote en Turno -->
+        <label class="toggle-change-box" for="chkLotChange">
+          <span>&#8644; ¿Hubo cambio de lote durante el turno?</span>
+          <input type="checkbox" id="chkLotChange">
+        </label>
+
+        <div class="lot2-section" id="lot2Container">
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
+            <div class="control-group">
+              <label for="inputLot2">Nuevo Lote (Lote 2)</label>
+              <input type="text" id="inputLot2" class="touch-input" placeholder="Ej. L261117-B" autocomplete="off">
+            </div>
+            <div class="control-group">
+              <label for="inputReceptionDate2">Fecha Recep. L2</label>
+              <input type="date" id="inputReceptionDate2" class="touch-input">
+            </div>
+          </div>
+        </div>
+
+        <!-- Propagar lote a toda la semana -->
+        <label class="propagate-check-box" for="chkPropagateWeek">
+          <input type="checkbox" id="chkPropagateWeek">
+          <span>&#9889; Propagar este lote automáticamente al resto de la semana (hasta Sábado)</span>
+        </label>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn-modal btn-modal-delete" id="deleteCellBtn">Borrar</button>
+        <button type="button" class="btn-modal btn-modal-cancel" id="cancelModalBtn">Cancelar</button>
+        <button type="submit" class="btn-modal btn-modal-save">Guardar y Sincronizar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ==========================================================================
+     MODAL 2: PROTOCOLO OBLIGATORIO DE LIMPIEZA DE ALÉRGENOS (SOYA/LECHE/NUEZ)
+     ========================================================================== -->
+<div class="modal-backdrop" id="allergenModalBackdrop" role="dialog" aria-modal="true">
+  <div class="modal-dialog">
+    <div class="modal-header danger-hdr">
+      <div>
+        <h3 id="allergenModalTitle">&#9888; ALERTA DE LIMPIEZA DE ALÉRGENO</h3>
+        <div class="modal-subtitle">Protocolo POES Obligatorio - KW Tortillería Industrial</div>
+      </div>
+      <button type="button" class="btn-close-modal" id="closeAllergenModalBtn">&times;</button>
+    </div>
+
+    <div class="modal-body">
+      <p style="font-size:12.5px; font-weight:700; color:#7F1D1D;">
+        Se requiere verificación inmediata de limpieza profunda por presencia o cambio de producto con alérgeno crítico. Este registro se notifica en vivo a la Oficina de Calidad.
+      </p>
+
+      <label class="checklist-item">
+        <input type="checkbox" class="poes-check" checked>
+        <span>1. Limpieza y sanitización profunda de tolvas, dosificadores y básculas del Área de Dosificación.</span>
+      </label>
+      <label class="checklist-item">
+        <input type="checkbox" class="poes-check" checked>
+        <span>2. Lavado y cambio de utensilios, cucharones, mallas de cernido y recipientes dedicados.</span>
+      </label>
+      <label class="checklist-item">
+        <input type="checkbox" class="poes-check" checked>
+        <span>3. Verificación visual libre de residuos alergénicos antes de iniciar pesada.</span>
+      </label>
+
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+        <div class="control-group">
+          <label for="allergenTimeInput">Hora de Limpieza</label>
+          <input type="time" id="allergenTimeInput" class="touch-input">
+        </div>
+        <div class="control-group">
+          <label for="allergenRespInput">Responsable POES</label>
+          <input type="text" id="allergenRespInput" class="touch-input" placeholder="Nombre / Código">
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn-modal btn-modal-delete" id="activateAllergenAlertBtn">&#128680; Mantener Alerta Activa</button>
+      <button type="button" class="btn-modal btn-modal-save" id="verifyAllergenCleanBtn" style="background:#15803D;">&#10004; Confirmar Limpieza POES OK</button>
+    </div>
+  </div>
+</div>
+
+<!-- ==========================================================================
+     MODAL 3: CONFIGURACIÓN NUBE (FIREBASE EN VIVO) Y GOOGLE SITES EMBED
+     ========================================================================== -->
+<div class="modal-backdrop" id="cloudModalBackdrop" role="dialog" aria-modal="true">
+  <div class="modal-dialog" style="max-width: 580px;">
+    <div class="modal-header">
+      <div>
+        <h3>&#9881; Sincronización en Tiempo Real y Google Sites</h3>
+        <div class="modal-subtitle">Conexión en vivo con Oficina de Calidad (KW Tortillería Industrial)</div>
+      </div>
+      <button type="button" class="btn-close-modal" id="closeCloudModalBtn">&times;</button>
+    </div>
+
+    <div class="modal-body">
+      <div class="control-group">
+        <label for="firebaseConfigTextarea">1. Configuración Firebase Firestore (JSON para Tiempo Real)</label>
+        <textarea id="firebaseConfigTextarea" class="touch-input" rows="4" style="font-family:monospace; font-size:11.5px;" placeholder='{"apiKey":"...","authDomain":"...","projectId":"...","storageBucket":"...","messagingSenderId":"...","appId":"..."}'></textarea>
+        <small style="color:var(--text-muted); font-size:11px;">Pegue aquí el objeto JSON de Firebase de KW Tortillería Industrial para sincronizar Dosificación y Oficina de Calidad al instante.</small>
+      </div>
+
+      <div class="control-group">
+        <label for="gasWebhookInput">2. Webhook Google Apps Script / Google Sheets (Opcional)</label>
+        <input type="url" id="gasWebhookInput" class="touch-input" placeholder="https://script.google.com/macros/s/.../exec">
+      </div>
+
+      <div class="control-group">
+        <label>3. Código listo para incrustar (Embed) en Google Sites:</label>
+        <div class="code-snippet-box" id="googleSitesIframeCode">&lt;iframe src="URL_DE_SU_APLICACION_ALOJADA" width="100%" height="920" frameborder="0" style="border:none; border-radius:8px;" allowfullscreen&gt;&lt;/iframe&gt;</div>
+        <button type="button" class="btn-action btn-add-rm" id="copyIframeCodeBtn" style="margin-top:6px; justify-content:center;">
+          &#128203; Copiar Código Embed para Google Sites
+        </button>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn-modal btn-modal-cancel" id="cancelCloudModalBtn">Cerrar</button>
+      <button type="button" class="btn-modal btn-modal-save" id="saveCloudConfigBtn">Guardar y Conectar en Vivo</button>
+    </div>
+  </div>
+</div>
+
+<!-- ==========================================================================
+     MODAL 4: REPORTE EJECUTIVO EN TIEMPO REAL PARA OFICINA DE CALIDAD
+     ========================================================================== -->
+<div class="modal-backdrop" id="qualityReportBackdrop" role="dialog" aria-modal="true">
+  <div class="modal-dialog" style="max-width: 560px;">
+    <div class="modal-header" style="background: #15803D;">
+      <div>
+        <h3>&#128228; Reporte en Tiempo Real — Oficina de Calidad</h3>
+        <div class="modal-subtitle">Resumen de Trazabilidad, Alérgenos y Cernido (KW-TRAZ-F-001)</div>
+      </div>
+      <button type="button" class="btn-close-modal" id="closeQualityReportBtn">&times;</button>
+    </div>
+
+    <div class="modal-body">
+      <textarea id="qualityExecutiveSummary" class="touch-input" rows="16" readonly style="font-family:monospace; font-size:11.5px; background:#F8FAFC;"></textarea>
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <button type="button" class="btn-action btn-add-rm" id="copyQualitySummaryBtn" style="flex:1; justify-content:center;">
+          &#128203; Copiar Resumen para Calidad
+        </button>
+        <button type="button" class="btn-action btn-csv" id="sendWhatsAppQualityBtn" style="flex:1; justify-content:center;">
+          &#128172; Enviar por WhatsApp Calidad
+        </button>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn-modal btn-modal-cancel" id="doneQualityReportBtn">Listo</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL 5: AGREGAR INGREDIENTE ADICIONAL -->
+<div class="modal-backdrop" id="addIngredientBackdrop" role="dialog" aria-modal="true">
+  <div class="modal-dialog" style="max-width: 420px;">
+    <div class="modal-header">
+      <div>
+        <h3>+ Agregar Materia Prima / Ingrediente</h3>
+        <div class="modal-subtitle">Se añade a la matriz semanal KW-TRAZ-F-001</div>
+      </div>
+      <button type="button" class="btn-close-modal" id="closeAddIngBtn">&times;</button>
+    </div>
+    <form id="addIngredientForm">
+      <div class="modal-body">
+        <div class="control-group">
+          <label for="newIngredientName">Nombre de la Materia Prima</label>
+          <input type="text" id="newIngredientName" class="touch-input" placeholder="Ej. SAL YODADA" required>
+        </div>
+        <div class="control-group">
+          <label for="newIngredientAllergen">¿Contiene Alérgeno Crítico?</label>
+          <select id="newIngredientAllergen" class="touch-select">
+            <option value="">Ninguno / No aplica</option>
+            <option value="SOYA">Alérgeno: SOYA</option>
+            <option value="LECHE">Alérgeno: LECHE</option>
+            <option value="NUEZ">Alérgeno: NUEZ</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-modal btn-modal-cancel" id="cancelAddIngBtn">Cancelar</button>
+        <button type="submit" class="btn-modal btn-modal-save">Agregar a Tabla</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- MODAL 6: CONFIRMACIÓN PERSONALIZADA -->
+<div class="modal-backdrop" id="confirmModalBackdrop" role="dialog" aria-modal="true">
+  <div class="modal-dialog" style="max-width: 400px;">
+    <div class="modal-header danger-hdr">
+      <div><h3>Confirmar Acción</h3></div>
+    </div>
+    <div class="modal-body">
+      <p id="confirmMessageText" style="font-size:13.5px; font-weight:600;"></p>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn-modal btn-modal-cancel" id="confirmCancelBtn">Cancelar</button>
+      <button type="button" class="btn-modal btn-modal-save" id="confirmOkBtn" style="background:var(--brand-accent);">Sí, Continuar</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-msg" id="toastNotification">Sincronizado</div>
+
+<script type="module">
+  /**
+   * ============================================================================
+   * MÓDULO PRINCIPAL DE TRAZABILIDAD EN TIEMPO REAL, ALÉRGENOS Y CERNIDO
+   * KW TORTILLERÍA INDUSTRIAL (FORMATO KW-TRAZ-F-001)
+   * ============================================================================
+   */
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+  import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+  import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+  // 1. CATÁLOGO BASE DE LAS 9 MATERIAS PRIMAS GENÉRICAS (USO ACADÉMICO PÚBLICO)
+  const DEFAULT_MATERIALS = [
+    { name: "HARINA", allergen: "" },
+    { name: "POLVO DE HORNEAR", allergen: "" },
+    { name: "ENZIMAS", allergen: "" },
+    { name: "LECHE", allergen: "LECHE" },
+    { name: "EDULCORANTES", allergen: "" },
+    { name: "GRASA VEGETAL", allergen: "" },
+    { name: "COLORANTES", allergen: "" },
+    { name: "SABORIZANTES", allergen: "" },
+    { name: "CONSERVANTES", allergen: "" }
+  ];
+
+  const DAY_NAMES = ["DOMINGO", "LUNES", "MARTES", "MIÉRCOLES", "JUEVES", "VIERNES", "SÁBADO"];
+  const MONTHS_ES = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
+
+  const LOCAL_STORAGE_KEY = "kw_tortilleria_trazabilidad_f001_v1";
+  const CLOUD_CFG_KEY = "kw_tortilleria_trazabilidad_f001_cloud_cfg";
+
+  // 2. ESTADO GLOBAL REACTIVO
+  let appState = {
+    weekStartISO: getSundayOfDate(new Date()),
+    activeDayIndex: new Date().getDay(),
+    filterText: "",
+    customMaterials: [...DEFAULT_MATERIALS],
+    weeks: {}
+  };
+
+  let activeEditContext = null;
+  let currentSiftState = "OK";
+  let activeAllergenModalType = null;
+  let pendingConfirmCallback = null;
+
+  // Variables de Firebase en tiempo real
+  let db = null;
+  let auth = null;
+  let currentUser = null;
+  let unsubscribeSnapshot = null;
+  let isApplyingRemoteUpdate = false;
+
+  // 3. UTILIDADES DE FECHA
+  function getSundayOfDate(dateObj) {
+    const d = new Date(dateObj.getFullYear(), dateObj.getMonth(), dateObj.getDate());
+    d.setDate(d.getDate() - d.getDay());
+    return toISODate(d);
+  }
+
+  function toISODate(dateObj) {
+    return `${dateObj.getFullYear()}-${String(dateObj.getMonth() + 1).padStart(2, "0")}-${String(dateObj.getDate()).padStart(2, "0")}`;
+  }
+
+  function parseISODate(isoStr) {
+    const [y, m, d] = isoStr.split("-").map(Number);
+    return new Date(y, m - 1, d);
+  }
+
+  function addDaysISO(isoStr, days) {
+    const d = parseISODate(isoStr);
+    d.setDate(d.getDate() + days);
+    return toISODate(d);
+  }
+
+  function formatFormattedDate(isoStr) {
+    if (!isoStr) return "-";
+    const d = parseISODate(isoStr);
+    return `${String(d.getDate()).padStart(2, "0")}-${MONTHS_ES[d.getMonth()]}-${String(d.getFullYear()).slice(-2)}`;
+  }
+
+  function getWeekDaysArray(sundayISO) {
+    return DAY_NAMES.map((name, idx) => {
+      const iso = addDaysISO(sundayISO, idx);
+      return { index: idx, name, iso, formatted: formatFormattedDate(iso) };
+    });
+  }
+
+  function escapeHtml(str) {
+    return String(str || "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById("toastNotification");
+    t.textContent = msg;
+    t.classList.add("show");
+    clearTimeout(t._timer);
+    t._timer = setTimeout(() => t.classList.remove("show"), 2600);
+  }
+
+  // 4. ESTRUCTURA DE DATOS DE SEMANA
+  function ensureCurrentWeekData() {
+    if (!appState.weeks[appState.weekStartISO]) {
+      appState.weeks[appState.weekStartISO] = {
+        operator: "",
+        sanitizer: "",
+        supervisor: "",
+        allergens: {
+          SOYA: { status: "NONE", time: "", resp: "" },
+          LECHE: { status: "NONE", time: "", resp: "" },
+          NUEZ: { status: "NONE", time: "", resp: "" }
+        },
+        records: {}
+      };
+    }
+    const w = appState.weeks[appState.weekStartISO];
+    if (!w.allergens) {
+      w.allergens = {
+        SOYA: { status: "NONE", time: "", resp: "" },
+        LECHE: { status: "NONE", time: "", resp: "" },
+        NUEZ: { status: "NONE", time: "", resp: "" }
+      };
+    }
+    return w;
+  }
+
+  // 5. PERSISTENCIA LOCAL + SINCRONIZACIÓN FIRESTORE EN TIEMPO REAL
+  function loadLocalState() {
+    try {
+      const raw = localStorage.getItem(LOCAL_STORAGE_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (parsed && typeof parsed === "object") {
+          appState = Object.assign(appState, parsed);
+          if (!Array.isArray(appState.customMaterials) || appState.customMaterials.length === 0) {
+            appState.customMaterials = [...DEFAULT_MATERIALS];
+          }
+        }
+      }
+    } catch (e) {
+      console.warn("Error leyendo estado local:", e);
+    }
+    ensureCurrentWeekData();
+  }
+
+  async function persistState(triggerWebhook = true) {
+    try {
+      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(appState));
+    } catch (e) {
+      console.warn("Error guardando localStorage:", e);
+    }
+
+    if (isApplyingRemoteUpdate) return;
+
+    const cloudCfg = getCloudConfig();
+    const weekData = ensureCurrentWeekData();
+
+    // Guardar en Firestore en tiempo real si está conectado
+    if (db && currentUser) {
+      try {
+        const appId = typeof __app_id !== "undefined" ? __app_id : "kw-tortilleria-dosificacion";
+        const weekDocRef = doc(db, "artifacts", appId, "public", "data", "trazabilidad_kw_f001", appState.weekStartISO);
+        await setDoc(weekDocRef, {
+          weekStartISO: appState.weekStartISO,
+          customMaterials: appState.customMaterials,
+          weekData: weekData,
+          updatedAt: new Date().toISOString()
+        }, { merge: true });
+      } catch (err) {
+        console.error("Error sincronizando con Firestore:", err);
+      }
+    }
+
+    // Enviar a Google Sheets Webhook si fue configurado
+    if (triggerWebhook && cloudCfg.gasWebhookUrl) {
+      try {
+        fetch(cloudCfg.gasWebhookUrl, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            empresa: "KW Tortillería Industrial",
+            formato: "KW-TRAZ-F-001",
+            planta: "Planta Principal",
+            semana: appState.weekStartISO,
+            datos: weekData
+          })
+        });
+      } catch (e) {
+        console.warn("Webhook no alcanzable:", e);
+      }
+    }
+  }
+
+  function getCloudConfig() {
+    try {
+      const raw = localStorage.getItem(CLOUD_CFG_KEY);
+      if (raw) return JSON.parse(raw);
+    } catch (e) {}
+    if (typeof __firebase_config !== "undefined" && __firebase_config) {
+      return { firebaseConfigStr: __firebase_config, gasWebhookUrl: "" };
+    }
+    return { firebaseConfigStr: "", gasWebhookUrl: "" };
+  }
+
+  async function initRealtimeCloud() {
+    const badge = document.getElementById("liveConnectionBadge");
+    const badgeText = document.getElementById("liveConnectionText");
+    const cfg = getCloudConfig();
+
+    if (!cfg.firebaseConfigStr) {
+      badge.classList.remove("is-live");
+      badgeText.textContent = "Modo Local (Respaldo Activo — Configure Nube para En Vivo)";
+      return;
+    }
+
+    try {
+      const fbConfig = JSON.parse(cfg.firebaseConfigStr);
+      const fbApp = initializeApp(fbConfig, "kwTortilleriaLive");
+      auth = getAuth(fbApp);
+      db = getFirestore(fbApp);
+
+      if (typeof __initial_auth_token !== "undefined" && __initial_auth_token) {
+        const cred = await signInWithCustomToken(auth, __initial_auth_token);
+        currentUser = cred.user;
+      } else {
+        const cred = await signInAnonymously(auth);
+        currentUser = cred.user;
+      }
+
+      badge.classList.add("is-live");
+      badgeText.textContent = "● EN VIVO — Sincronizado con Oficina de Calidad (KW Tortillería Industrial)";
+      subscribeToCurrentWeek();
+    } catch (err) {
+      console.error("Error iniciando Firebase:", err);
+      badge.classList.remove("is-live");
+      badgeText.textContent = "Error de Configuración Nube (Trabajando en Modo Local)";
+    }
+  }
+
+  function subscribeToCurrentWeek() {
+    if (!db || !currentUser) return;
+    if (unsubscribeSnapshot) unsubscribeSnapshot();
+
+    const appId = typeof __app_id !== "undefined" ? __app_id : "kw-tortilleria-dosificacion";
+    const weekDocRef = doc(db, "artifacts", appId, "public", "data", "trazabilidad_kw_f001", appState.weekStartISO);
+
+    unsubscribeSnapshot = onSnapshot(
+      weekDocRef,
+      (snap) => {
+        if (snap.exists()) {
+          const remote = snap.data();
+          isApplyingRemoteUpdate = true;
+          if (Array.isArray(remote.customMaterials) && remote.customMaterials.length > 0) {
+            appState.customMaterials = remote.customMaterials;
+          }
+          if (remote.weekData) {
+            appState.weeks[appState.weekStartISO] = remote.weekData;
+          }
+          localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(appState));
+          renderAll();
+          isApplyingRemoteUpdate = false;
+        }
+      },
+      (error) => {
+        console.warn("Error en listener en tiempo real:", error);
+      }
+    );
+  }
+
+  // 6. RENDERIZADO DE ALERTAS CRÍTICAS SUPERIORES (ALÉRGENOS + HALLAZGOS CERNIDO)
+  function renderCriticalAlerts(weekData, days) {
+    const container = document.getElementById("criticalAlertsContainer");
+    container.innerHTML = "";
+
+    // A) Alertas de Alérgenos Activas (Soya, Leche, Nuez)
+    ["SOYA", "LECHE", "NUEZ"].forEach((allergen) => {
+      const info = weekData.allergens[allergen];
+      const btn = document.getElementById(`btnAllergen${allergen.charAt(0) + allergen.slice(1).toLowerCase()}`);
+      const sub = document.getElementById(`statusAllergen${allergen.charAt(0) + allergen.slice(1).toLowerCase()}`);
+
+      btn.classList.remove("active-alert", "verified-ok");
+      if (info.status === "ACTIVE") {
+        btn.classList.add("active-alert");
+        sub.textContent = "REQUIERE LIMPIEZA POES";
+
+        const banner = document.createElement("div");
+        banner.className = "alert-banner allergen-active";
+        banner.innerHTML = `
+          <div class="alert-banner-info">
+            <div class="alert-icon-big">&#128680;</div>
+            <div>
+              <div class="alert-banner-title">ALERTA INMEDIATA DE LIMPIEZA DE ALÉRGENO: ${allergen}</div>
+              <div class="alert-banner-desc">Obligatorio ejecutar protocolo POES en tolvas, mallas y mesas de Dosificación antes de continuar pesaje.</div>
+            </div>
+          </div>
+          <button type="button" class="btn-banner-verify" data-verify-allergen="${allergen}">
+            &#10004; Verificar Limpieza POES
+          </button>
+        `;
+        banner.querySelector("button").addEventListener("click", () => openAllergenModal(allergen));
+        container.appendChild(banner);
+      } else if (info.status === "VERIFIED") {
+        btn.classList.add("verified-ok");
+        sub.textContent = `POES OK (${info.time || "Verificado"})`;
+      } else {
+        sub.textContent = "Sin alerta activa";
+      }
+    });
+
+    // B) Alertas por Hallazgos en Cernido
+    Object.entries(weekData.records).forEach(([key, rec]) => {
+      if (rec && rec.siftStatus === "HALLAZGO") {
+        const [matIdx, dayIdx] = key.split("_").map(Number);
+        const mat = appState.customMaterials[matIdx];
+        const day = days[dayIdx];
+        if (!mat || !day) return;
+
+        const banner = document.createElement("div");
+        banner.className = "alert-banner sifting-finding";
+        banner.innerHTML = `
+          <div class="alert-banner-info">
+            <div class="alert-icon-big">&#9888;</div>
+            <div>
+              <div class="alert-banner-title">HALLAZGO EN CERNIDO: ${escapeHtml(mat.name)} (${day.name} ${day.formatted})</div>
+              <div class="alert-banner-desc">
+                <strong>Lote:</strong> ${escapeHtml(rec.lot1)} | <strong>Hallazgo:</strong> ${escapeHtml(rec.findingType || "No especificado")} — <strong>Acción:</strong> ${escapeHtml(rec.findingAction || "Pendiente")}
+              </div>
+            </div>
+          </div>
+          <button type="button" class="btn-banner-verify" style="color:#92400E;">Revisar Registro</button>
+        `;
+        banner.querySelector("button").addEventListener("click", () => openEditModal(matIdx, dayIdx));
+        container.appendChild(banner);
+      }
+    });
+  }
+
+  // 7. RENDERIZADO PRINCIPAL
+  function renderAll() {
+    const weekData = ensureCurrentWeekData();
+    const days = getWeekDaysArray(appState.weekStartISO);
+
+    document.getElementById("weekStartInput").value = appState.weekStartISO;
+    document.getElementById("operatorSelect").value = weekData.operator || "";
+    document.getElementById("sanitizerSelect").value = weekData.sanitizer || "";
+    document.getElementById("supervisorSelect").value = weekData.supervisor || "";
+
+    // Poblar selector de día activo
+    const activeDaySel = document.getElementById("activeDaySelect");
+    activeDaySel.innerHTML = days.map((d) =>
+      `<option value="${d.index}" ${appState.activeDayIndex === d.index ? "selected" : ""}>${d.name} (${d.formatted})</option>`
+    ).join("");
+
+    // Firmas pie de página
+    document.getElementById("sigOperatorName").textContent = weekData.operator || "Operador de Dosificación";
+    document.getElementById("sigSanitizerName").textContent = weekData.sanitizer || "Sanitizador / Auxiliar";
+    document.getElementById("sigSupervisorName").textContent = weekData.supervisor || "Supervisor de Calidad";
+
+    renderCriticalAlerts(weekData, days);
+    renderDesktopTable(days, weekData);
+    renderMobileView(days, weekData);
+    updateKPIs(weekData);
+  }
+
+  function renderDesktopTable(days, weekData) {
+    const headerRow = document.getElementById("tableDaysHeaderRow");
+    const subHeaderRow = document.getElementById("tableSubHeaderRow");
+    const tbody = document.getElementById("traceabilityBody");
+
+    while (headerRow.children.length > 1) {
+      headerRow.removeChild(headerRow.lastChild);
+    }
+    subHeaderRow.innerHTML = "";
+
+    days.forEach((day) => {
+      const th = document.createElement("th");
+      th.innerHTML = `<span class="day-date-pill">${day.formatted}</span><span>${day.name}</span>`;
+      headerRow.appendChild(th);
+
+      const subTh = document.createElement("th");
+      subTh.textContent = "RECEP. / LOTE / CERNIDO";
+      subHeaderRow.appendChild(subTh);
+    });
+
+    tbody.innerHTML = "";
+    const query = appState.filterText.trim().toUpperCase();
+
+    appState.customMaterials.forEach((matObj, matIdx) => {
+      if (query && !matObj.name.includes(query)) return;
+
+      const tr = document.createElement("tr");
+      const tdName = document.createElement("td");
+      tdName.className = "col-formula";
+      tdName.innerHTML = `
+        <div>${escapeHtml(matObj.name)}</div>
+        ${matObj.allergen ? `<span class="allergen-tag-inline">&#9888; ALÉRGENO: ${escapeHtml(matObj.allergen)}</span>` : ""}
+      `;
+      tr.appendChild(tdName);
+
+      days.forEach((day) => {
+        const key = `${matIdx}_${day.index}`;
+        const rec = weekData.records[key];
+        const prevRec = day.index > 0 ? weekData.records[`${matIdx}_${day.index - 1}`] : null;
+
+        let cellClass = "cell-pending";
+        if (rec && rec.lot1) {
+          if (rec.siftStatus === "HALLAZGO") cellClass = "cell-finding";
+          else if (rec.hasChange) cellClass = "cell-change";
+          else cellClass = "cell-ok";
+        }
+
+        const td = document.createElement("td");
+        td.className = `trace-cell ${cellClass}`;
+
+        const recDateText = rec && rec.receptionDate ? formatFormattedDate(rec.receptionDate) : "-";
+        const lot1Text = rec && rec.lot1 ? escapeHtml(rec.lot1) : "-";
+        const lot2Html = rec && rec.hasChange && rec.lot2
+          ? `<div class="slot-line" style="background:#FFFBEB; border-color:#D97706;">
+               <span class="slot-tag" style="color:#B45309;">L2</span>
+               <span class="slot-val">${escapeHtml(rec.lot2)}</span>
+             </div>`
+          : "";
+
+        let siftBadgeHtml = `<span class="slot-tag">-</span>`;
+        if (rec && rec.lot1) {
+          if (rec.siftStatus === "HALLAZGO") {
+            siftBadgeHtml = `<span class="sift-pill-finding">&#9888; HALLAZGO</span>`;
+          } else if (rec.siftStatus === "OK") {
+            siftBadgeHtml = `<span class="sift-pill-ok">&#10004; CERNIDO OK</span>`;
+          } else {
+            siftBadgeHtml = `<span class="slot-tag">PEND.</span>`;
+          }
+        }
+
+        const quickActions = [];
+        if (!rec && prevRec && prevRec.lot1) {
+          quickActions.push(`<button type="button" class="btn-mini-cell btn-copy-prev" title="Copiar lote de ayer">&#8634; Igual ayer</button>`);
+        }
+        if (rec && rec.lot1 && day.index < 6) {
+          quickActions.push(`<button type="button" class="btn-mini-cell btn-prop-week" title="Aplicar este lote hasta el Sábado">&#9889; Semana</button>`);
+        }
+
+        td.innerHTML = `
+          <div class="cell-slots">
+            <div class="slot-line">
+              <span class="slot-tag">F.Rec</span>
+              <span class="slot-val">${recDateText}</span>
+            </div>
+            <div class="slot-line">
+              <span class="slot-tag">Lote</span>
+              <span class="slot-val">${lot1Text}</span>
+            </div>
+            ${lot2Html}
+            <div class="slot-line">
+              <span class="slot-tag">Cernido</span>
+              ${siftBadgeHtml}
+            </div>
+          </div>
+          <div class="cell-footer-actions">
+            <div>${quickActions.join(" ")}</div>
+            <span style="font-size:9.5px; font-weight:700; color:#475569;">${rec ? "Editar" : "+"}</span>
+          </div>
+        `;
+
+        td.addEventListener("click", (e) => {
+          if (e.target.closest(".btn-copy-prev")) {
+            e.stopPropagation();
+            replicatePreviousDaySingle(matIdx, day.index);
+            return;
+          }
+          if (e.target.closest(".btn-prop-week")) {
+            e.stopPropagation();
+            propagateLotToRestOfWeek(matIdx, day.index);
+            return;
+          }
+          openEditModal(matIdx, day.index);
+        });
+
+        tr.appendChild(td);
+      });
+
+      tbody.appendChild(tr);
+    });
+  }
+
+  function renderMobileView(days, weekData) {
+    const tabsContainer = document.getElementById("mobileDayTabs");
+    const listContainer = document.getElementById("mobileCardsList");
+
+    tabsContainer.innerHTML = "";
+    days.forEach((day) => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = `mobile-day-tab ${appState.activeDayIndex === day.index ? "active" : ""}`;
+      btn.innerHTML = `<strong style="display:block; font-size:11px;">${day.name}</strong><span style="font-size:11px;">${day.formatted}</span>`;
+      btn.addEventListener("click", () => {
+        appState.activeDayIndex = day.index;
+        document.getElementById("activeDaySelect").value = String(day.index);
+        renderMobileView(days, weekData);
+      });
+      tabsContainer.appendChild(btn);
+    });
+
+    listContainer.innerHTML = "";
+    const dayIdx = appState.activeDayIndex;
+    const query = appState.filterText.trim().toUpperCase();
+
+    appState.customMaterials.forEach((matObj, matIdx) => {
+      if (query && !matObj.name.includes(query)) return;
+      const rec = weekData.records[`${matIdx}_${dayIdx}`];
+      const prevRec = dayIdx > 0 ? weekData.records[`${matIdx}_${dayIdx - 1}`] : null;
+
+      let cardCls = "";
+      let statusHtml = `<span style="font-size:11px; color:#64748B; font-weight:700;">Pendiente</span>`;
+      if (rec && rec.lot1) {
+        if (rec.siftStatus === "HALLAZGO") {
+          cardCls = "card-finding";
+          statusHtml = `<span class="sift-pill-finding">&#9888; HALLAZGO CERNIDO</span>`;
+        } else if (rec.hasChange) {
+          cardCls = "card-change";
+          statusHtml = `<span style="font-size:11px; font-weight:800; color:#B45309;">&#8644; Cambio Lote</span>`;
+        } else {
+          cardCls = "card-ok";
+          statusHtml = `<span class="sift-pill-ok">&#10004; Cernido OK</span>`;
+        }
+      }
+
+      const card = document.createElement("div");
+      card.className = `mobile-rm-card ${cardCls}`;
+      card.innerHTML = `
+        <div class="mobile-rm-header">
+          <div>
+            <div class="mobile-rm-title">${escapeHtml(matObj.name)}</div>
+            ${matObj.allergen ? `<span class="allergen-tag-inline">&#9888; ALÉRGENO: ${escapeHtml(matObj.allergen)}</span>` : ""}
+          </div>
+          ${statusHtml}
+        </div>
+        <div class="mobile-rm-body">
+          <div class="mobile-field-box">
+            <span>FECHA RECEPCIÓN</span>
+            <strong>${rec && rec.receptionDate ? formatFormattedDate(rec.receptionDate) : "Sin registro"}</strong>
+          </div>
+          <div class="mobile-field-box">
+            <span>LOTE PRINCIPAL</span>
+            <strong>${rec && rec.lot1 ? escapeHtml(rec.lot1) : "Sin registro"}</strong>
+          </div>
+        </div>
+        <div class="mobile-rm-actions">
+          <button type="button" class="btn-mobile-edit">${rec ? "Editar Registro" : "+ Registrar Lote y Cernido"}</button>
+          ${(!rec && prevRec && prevRec.lot1) ? `<button type="button" class="btn-mobile-copy">&#8634; Igual ayer</button>` : ""}
+        </div>
+      `;
+
+      card.querySelector(".btn-mobile-edit").addEventListener("click", () => openEditModal(matIdx, dayIdx));
+      const copyBtn = card.querySelector(".btn-mobile-copy");
+      if (copyBtn) {
+        copyBtn.addEventListener("click", () => replicatePreviousDaySingle(matIdx, dayIdx));
+      }
+      listContainer.appendChild(card);
+    });
+  }
+
+  // 8. ACTUALIZACIÓN DE KPIS
+  function updateKPIs(weekData) {
+    const totalCells = appState.customMaterials.length * 7;
+    let filled = 0;
+    let siftOk = 0;
+    let siftFindings = 0;
+    let lotChanges = 0;
+
+    Object.values(weekData.records).forEach((rec) => {
+      if (rec && rec.lot1 && rec.lot1.trim() !== "") {
+        filled++;
+        if (rec.siftStatus === "OK") siftOk++;
+        if (rec.siftStatus === "HALLAZGO") siftFindings++;
+        if (rec.hasChange) lotChanges++;
+      }
+    });
+
+    const pct = totalCells > 0 ? Math.round((filled / totalCells) * 100) : 0;
+    document.getElementById("kpiPercent").textContent = `${pct}%`;
+    document.getElementById("kpiProgressBar").style.width = `${pct}%`;
+    document.getElementById("kpiCellsDetail").textContent = `${filled} de ${totalCells} celdas completadas`;
+
+    const siftEl = document.getElementById("kpiSiftingSummary");
+    siftEl.textContent = `${siftOk} OK / ${siftFindings} Hallazgos`;
+    siftEl.style.color = siftFindings > 0 ? "#DC2626" : "#15803D";
+
+    const activeAllergens = ["SOYA", "LECHE", "NUEZ"].filter((a) => weekData.allergens[a].status === "ACTIVE");
+    document.getElementById("kpiAllergensCount").textContent = `${activeAllergens.length} Activas`;
+    document.getElementById("kpiAllergensSub").textContent = activeAllergens.length > 0
+      ? `Pendiente POES: ${activeAllergens.join(", ")}`
+      : "Soya / Leche / Nuez sin alertas pendientes";
+
+    document.getElementById("kpiLotChanges").textContent = lotChanges;
+  }
+
+  // 9. AUTOMATIZACIONES PARA EL OPERADOR (COPIAR DÍA ANTERIOR Y PROPAGAR SEMANA)
+  function replicatePreviousDaySingle(matIdx, dayIdx) {
+    if (dayIdx <= 0) return;
+    const weekData = ensureCurrentWeekData();
+    const prev = weekData.records[`${matIdx}_${dayIdx - 1}`];
+    if (!prev || !prev.lot1) return;
+
+    const currentLot = (prev.hasChange && prev.lot2) ? prev.lot2 : prev.lot1;
+    const currentRecDate = (prev.hasChange && prev.receptionDate2) ? prev.receptionDate2 : prev.receptionDate;
+
+    weekData.records[`${matIdx}_${dayIdx}`] = {
+      receptionDate: currentRecDate,
+      lot1: currentLot,
+      hasChange: false,
+      lot2: "",
+      receptionDate2: "",
+      siftStatus: "OK",
+      findingType: "",
+      findingAction: ""
+    };
+
+    persistState();
+    renderAll();
+    showToast(`Lote ${currentLot} copiado a ${DAY_NAMES[dayIdx]}`);
+  }
+
+  function copyAllFromPreviousDay() {
+    const dayIdx = appState.activeDayIndex;
+    if (dayIdx <= 0) {
+      showToast("Seleccione un día de Lunes a Sábado para copiar del día anterior");
+      return;
+    }
+
+    const weekData = ensureCurrentWeekData();
+    let copiedCount = 0;
+
+    appState.customMaterials.forEach((_, matIdx) => {
+      const prev = weekData.records[`${matIdx}_${dayIdx - 1}`];
+      const existingToday = weekData.records[`${matIdx}_${dayIdx}`];
+      if (prev && prev.lot1 && !existingToday) {
+        const currentLot = (prev.hasChange && prev.lot2) ? prev.lot2 : prev.lot1;
+        const currentRecDate = (prev.hasChange && prev.receptionDate2) ? prev.receptionDate2 : prev.receptionDate;
+        weekData.records[`${matIdx}_${dayIdx}`] = {
+          receptionDate: currentRecDate,
+          lot1: currentLot,
+          hasChange: false,
+          lot2: "",
+          receptionDate2: "",
+          siftStatus: "OK",
+          findingType: "",
+          findingAction: ""
+        };
+        copiedCount++;
+      }
+    });
+
+    if (copiedCount > 0) {
+      persistState();
+      renderAll();
+      showToast(`⚡ ${copiedCount} lotes copiados automáticamente al ${DAY_NAMES[dayIdx]}`);
+    } else {
+      showToast("No hay lotes nuevos del día anterior por copiar");
+    }
+  }
+
+  function propagateLotToRestOfWeek(matIdx, startDayIdx) {
+    const weekData = ensureCurrentWeekData();
+    const source = weekData.records[`${matIdx}_${startDayIdx}`];
+    if (!source || !source.lot1) return;
+
+    const activeLot = (source.hasChange && source.lot2) ? source.lot2 : source.lot1;
+    const activeRecDate = (source.hasChange && source.receptionDate2) ? source.receptionDate2 : source.receptionDate;
+
+    let applied = 0;
+    for (let d = startDayIdx + 1; d < 7; d++) {
+      weekData.records[`${matIdx}_${d}`] = {
+        receptionDate: activeRecDate,
+        lot1: activeLot,
+        hasChange: false,
+        lot2: "",
+        receptionDate2: "",
+        siftStatus: "OK",
+        findingType: "",
+        findingAction: ""
+      };
+      applied++;
+    }
+
+    persistState();
+    renderAll();
+    showToast(`⚡ Lote ${activeLot} propagado a ${applied} días restantes`);
+  }
+
+  // 10. MODAL DE EDICIÓN DE REGISTRO Y CERNIDO
+  function openEditModal(matIdx, dayIdx) {
+    activeEditContext = { matIdx, dayIdx };
+    const weekData = ensureCurrentWeekData();
+    const days = getWeekDaysArray(appState.weekStartISO);
+    const matObj = appState.customMaterials[matIdx];
+    const dayObj = days[dayIdx];
+    const rec = weekData.records[`${matIdx}_${dayIdx}`];
+
+    document.getElementById("modalMaterialTitle").textContent = matObj.name;
+    document.getElementById("modalDaySubtitle").textContent = `${dayObj.name} — ${dayObj.formatted}`;
+
+    document.getElementById("inputReceptionDate").value = rec ? (rec.receptionDate || dayObj.iso) : dayObj.iso;
+    document.getElementById("inputLot1").value = rec ? (rec.lot1 || "") : "";
+    document.getElementById("chkLotChange").checked = rec ? Boolean(rec.hasChange) : false;
+    document.getElementById("inputLot2").value = rec ? (rec.lot2 || "") : "";
+    document.getElementById("inputReceptionDate2").value = rec ? (rec.receptionDate2 || "") : "";
+    document.getElementById("chkPropagateWeek").checked = false;
+
+    setSiftingUIState(rec ? (rec.siftStatus || "OK") : "OK");
+    document.getElementById("inputFindingType").value = rec ? (rec.findingType || "") : "";
+    document.getElementById("inputFindingAction").value = rec ? (rec.findingAction || "") : "";
+
+    toggleLot2UI(document.getElementById("chkLotChange").checked);
+    document.getElementById("deleteCellBtn").style.display = rec ? "inline-block" : "none";
+    document.getElementById("editModalBackdrop").classList.add("open");
+    setTimeout(() => document.getElementById("inputLot1").focus(), 60);
+  }
+
+  function setSiftingUIState(state) {
+    currentSiftState = state;
+    document.querySelectorAll(".sift-option-btn").forEach((btn) => {
+      btn.classList.remove("selected-ok", "selected-finding", "selected-pending");
+      if (btn.dataset.sift === state) {
+        if (state === "OK") btn.classList.add("selected-ok");
+        else if (state === "HALLAZGO") btn.classList.add("selected-finding");
+        else btn.classList.add("selected-pending");
+      }
+    });
+
+    const findingBox = document.getElementById("findingDetailsContainer");
+    const typeSel = document.getElementById("inputFindingType");
+    const actionInp = document.getElementById("inputFindingAction");
+    if (state === "HALLAZGO") {
+      findingBox.classList.add("visible");
+      typeSel.required = true;
+      actionInp.required = true;
+      setTimeout(() => {
+        findingBox.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      }, 50);
+    } else {
+      findingBox.classList.remove("visible");
+      typeSel.required = false;
+      actionInp.required = false;
+    }
+  }
+
+  function toggleLot2UI(show) {
+    const box = document.getElementById("lot2Container");
+    const inp = document.getElementById("inputLot2");
+    if (show) {
+      box.classList.add("visible");
+      inp.required = true;
+    } else {
+      box.classList.remove("visible");
+      inp.required = false;
+    }
+  }
+
+  function closeEditModal() {
+    document.getElementById("editModalBackdrop").classList.remove("open");
+    activeEditContext = null;
+  }
+
+  // 11. MODAL DE ALÉRGENOS POES (SOYA, LECHE, NUEZ)
+  function openAllergenModal(allergenName) {
+    activeAllergenModalType = allergenName;
+    const weekData = ensureCurrentWeekData();
+    const info = weekData.allergens[allergenName];
+
+    document.getElementById("allergenModalTitle").textContent = `⚠ PROTOCOLO ALÉRGENO: ${allergenName}`;
+    const now = new Date();
+    document.getElementById("allergenTimeInput").value = info.time || `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
+    document.getElementById("allergenRespInput").value = info.resp || weekData.sanitizer || weekData.operator || "";
+    document.getElementById("allergenModalBackdrop").classList.add("open");
+  }
+
+  function closeAllergenModal() {
+    document.getElementById("allergenModalBackdrop").classList.remove("open");
+    activeAllergenModalType = null;
+  }
+
+  // 12. GENERACIÓN DE REPORTE EN TIEMPO REAL PARA OFICINA DE CALIDAD
+  function buildExecutiveQualitySummary() {
+    const weekData = ensureCurrentWeekData();
+    const days = getWeekDaysArray(appState.weekStartISO);
+    const totalCells = appState.customMaterials.length * 7;
+    let filled = 0;
+    const changesList = [];
+    const findingsList = [];
+    const detailedTraceLines = [];
+
+    appState.customMaterials.forEach((mat, matIdx) => {
+      const matEntries = [];
+      days.forEach((day) => {
+        const rec = weekData.records[`${matIdx}_${day.index}`];
+        if (!rec || !rec.lot1) return;
+        filled++;
+
+        const fRec1 = rec.receptionDate ? formatFormattedDate(rec.receptionDate) : "S/F";
+        let lotDetail = `${day.name} (${day.formatted}): Lote ${rec.lot1} [F.Rec: ${fRec1}]`;
+        if (rec.hasChange && rec.lot2) {
+          const fRec2 = rec.receptionDate2 ? formatFormattedDate(rec.receptionDate2) : "S/F";
+          lotDetail += ` -> Cambio L2: ${rec.lot2} [F.Rec: ${fRec2}]`;
+          changesList.push(`- ${day.name} (${day.formatted}): ${mat.name} -> L1: ${rec.lot1} (F.Rec: ${fRec1}) cambió a L2: ${rec.lot2} (F.Rec: ${fRec2})`);
+        }
+        lotDetail += ` | Cernido: ${rec.siftStatus || "OK"}`;
+        matEntries.push(`   • ${lotDetail}`);
+
+        if (rec.siftStatus === "HALLAZGO") {
+          findingsList.push(`- [CRÍTICO] ${day.name} (${day.formatted}): ${mat.name} (Lote ${rec.lot1} | F.Rec: ${fRec1}) | Hallazgo: ${rec.findingType} | Acción: ${rec.findingAction}`);
+        }
+      });
+
+      if (matEntries.length > 0) {
+        const allergenTag = mat.allergen ? ` [ALÉRGENO: ${mat.allergen}]` : "";
+        detailedTraceLines.push(`* ${mat.name}${allergenTag}:`);
+        detailedTraceLines.push(...matEntries);
+      }
+    });
+
+    const pct = totalCells > 0 ? Math.round((filled / totalCells) * 100) : 0;
+    const allergenLines = ["SOYA", "LECHE", "NUEZ"].map((a) => {
+      const st = weekData.allergens[a];
+      if (st.status === "ACTIVE") return `- ${a}: 🚨 ALERTA ACTIVA (Limpieza POES pendiente)`;
+      if (st.status === "VERIFIED") return `- ${a}: ✅ Limpieza POES verificada (${st.time} por ${st.resp || "Operador"})`;
+      return `- ${a}: Sin novedad`;
+    });
+
+    return [
+      `KW TORTILLERÍA INDUSTRIAL - PLANTA PRINCIPAL`,
+      `REPORTE EN TIEMPO REAL DE TRAZABILIDAD Y CERNIDO (KW-TRAZ-F-001)`,
+      `Semana: ${days[0].formatted} al ${days[6].formatted} | Cumplimiento: ${pct}% (${filled}/${totalCells})`,
+      `Operador: ${weekData.operator || "Pendiente"} | Auxiliar: ${weekData.sanitizer || "Pendiente"} | Sup. Calidad: ${weekData.supervisor || "Pendiente"}`,
+      ``,
+      `1. ESTADO DE ALÉRGENOS (POES):`,
+      ...allergenLines,
+      ``,
+      `2. HALLAZGOS EN CERNIDO DE MATERIA PRIMA (${findingsList.length}):`,
+      ...(findingsList.length > 0 ? findingsList : [`- Sin hallazgos reportados en cernido.`]),
+      ``,
+      `3. CAMBIOS DE LOTE EN TURNO (${changesList.length}):`,
+      ...(changesList.length > 0 ? changesList : [`- Sin cambios de lote en turno.`]),
+      ``,
+      `4. DETALLE DE LOTES Y FECHAS DE RECEPCIÓN POR MATERIA PRIMA:`,
+      ...(detailedTraceLines.length > 0 ? detailedTraceLines : [`- Aún no hay lotes registrados en la tabla para esta semana.`])
+    ].join("\n");
+  }
+
+  // 13. EXPORTACIÓN EXCEL / CSV ORGANIZADO EN COLUMNAS Y CELDAS
+  function downloadCSV() {
+    const weekData = ensureCurrentWeekData();
+    const days = getWeekDaysArray(appState.weekStartISO);
+
+    const headerCols = ["MATERIA PRIMA", "ALÉRGENO"];
+    days.forEach((d) => {
+      headerCols.push(`${d.name} (${d.formatted}) - F. RECEPCIÓN`);
+      headerCols.push(`${d.name} (${d.formatted}) - LOTE 1`);
+      headerCols.push(`${d.name} (${d.formatted}) - LOTE 2 / CAMBIO`);
+      headerCols.push(`${d.name} (${d.formatted}) - F. RECEP. L2`);
+      headerCols.push(`${d.name} (${d.formatted}) - CERNIDO`);
+      headerCols.push(`${d.name} (${d.formatted}) - HALLAZGO / ACCIÓN`);
+    });
+
+    const dataRows = appState.customMaterials.map((matObj, matIdx) => {
+      const row = [matObj.name, matObj.allergen || "NO"];
+      days.forEach((d) => {
+        const rec = weekData.records[`${matIdx}_${d.index}`];
+        if (rec && rec.lot1) {
+          row.push(
+            rec.receptionDate ? formatFormattedDate(rec.receptionDate) : "",
+            rec.lot1 || "",
+            rec.hasChange && rec.lot2 ? rec.lot2 : "",
+            rec.hasChange && rec.receptionDate2 ? formatFormattedDate(rec.receptionDate2) : "",
+            rec.siftStatus || "OK",
+            rec.siftStatus === "HALLAZGO" ? `${rec.findingType} - ${rec.findingAction}` : ""
+          );
+        } else {
+          row.push("", "", "", "", "", "");
+        }
+      });
+      return row;
+    });
+
+    // Construir tabla estructurada compatible directamente con Excel (.xls / celdas y columnas reales sin separación por comas)
+    const escXml = (v) => String(v ?? "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+
+    const theadHtml = `<tr>${headerCols.map((h) => `<th style="background:#0033A0;color:#FFFFFF;font-weight:bold;border:1px solid #94A3B8;padding:6px;white-space:nowrap;">${escXml(h)}</th>`).join("")}</tr>`;
+    const tbodyHtml = dataRows.map((r, rIdx) => {
+      const bg = rIdx % 2 === 0 ? "#FFFFFF" : "#F8FAFC";
+      return `<tr>${r.map((cell, cIdx) => {
+        const bold = cIdx === 0 ? "font-weight:bold;background:#F1F5F9;" : `background:${bg};`;
+        return `<td style="${bold}border:1px solid #CBD5E1;padding:5px;mso-number-format:'\@';">${escXml(cell)}</td>`;
+      }).join("")}</tr>`;
+    }).join("");
+
+    const excelHtml = `
+      <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
+      <head><meta charset="UTF-8"><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>Trazabilidad KW</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head>
+      <body>
+        <table border="1" style="border-collapse:collapse;font-family:Calibri,Arial,sans-serif;font-size:11pt;">
+          <tr><td colspan="${headerCols.length}" style="font-size:14pt;font-weight:bold;background:#001F66;color:#FFFFFF;padding:8px;">KW TORTILLERÍA INDUSTRIAL | CONTROL DE PESADAS EN DOSIFICACIÓN PARA TRAZABILIDAD (KW-TRAZ-F-001)</td></tr>
+          <tr>
+            <td colspan="2" style="font-weight:bold;background:#EBF1FA;">Semana: ${escXml(days[0].formatted)} al ${escXml(days[6].formatted)}</td>
+            <td colspan="4" style="font-weight:bold;background:#EBF1FA;">Operador: ${escXml(weekData.operator || "Pendiente")}</td>
+            <td colspan="4" style="font-weight:bold;background:#EBF1FA;">Auxiliar: ${escXml(weekData.sanitizer || "Pendiente")}</td>
+            <td colspan="4" style="font-weight:bold;background:#EBF1FA;">Sup. Calidad: ${escXml(weekData.supervisor || "Pendiente")}</td>
+          </tr>
+          <tr><td colspan="${headerCols.length}"></td></tr>
+          <thead>${theadHtml}</thead>
+          <tbody>${tbodyHtml}</tbody>
+        </table>
+      </body></html>`;
+
+    const blob = new Blob(["﻿", excelHtml], { type: "application/vnd.ms-excel;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `KW-TRAZ-F-001_KWTortilleriaIndustrial_${appState.weekStartISO}.xls`;
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast("Archivo Excel descargado organizado en columnas y celdas");
+  }
+
+  // 14. EVENTOS DE INTERFAZ
+  function bindEvents() {
+    document.getElementById("weekStartInput").addEventListener("change", (e) => {
+      if (!e.target.value) return;
+      appState.weekStartISO = getSundayOfDate(parseISODate(e.target.value));
+      ensureCurrentWeekData();
+      persistState(false);
+      subscribeToCurrentWeek();
+      renderAll();
+    });
+
+    document.getElementById("prevWeekBtn").addEventListener("click", () => {
+      appState.weekStartISO = addDaysISO(appState.weekStartISO, -7);
+      ensureCurrentWeekData();
+      subscribeToCurrentWeek();
+      renderAll();
+    });
+
+    document.getElementById("nextWeekBtn").addEventListener("click", () => {
+      appState.weekStartISO = addDaysISO(appState.weekStartISO, 7);
+      ensureCurrentWeekData();
+      subscribeToCurrentWeek();
+      renderAll();
+    });
+
+    document.getElementById("activeDaySelect").addEventListener("change", (e) => {
+      appState.activeDayIndex = Number(e.target.value);
+      renderAll();
+    });
+
+    ["operatorSelect", "sanitizerSelect", "supervisorSelect"].forEach((id) => {
+      document.getElementById(id).addEventListener("change", (e) => {
+        const w = ensureCurrentWeekData();
+        if (id === "operatorSelect") w.operator = e.target.value;
+        if (id === "sanitizerSelect") w.sanitizer = e.target.value;
+        if (id === "supervisorSelect") w.supervisor = e.target.value;
+        persistState();
+        renderAll();
+      });
+    });
+
+    // Botones Alérgenos Soya, Leche, Nuez
+    document.querySelectorAll(".btn-allergen").forEach((btn) => {
+      btn.addEventListener("click", () => openAllergenModal(btn.dataset.allergen));
+    });
+
+    document.getElementById("activateAllergenAlertBtn").addEventListener("click", () => {
+      if (!activeAllergenModalType) return;
+      const w = ensureCurrentWeekData();
+      w.allergens[activeAllergenModalType] = { status: "ACTIVE", time: "", resp: "" };
+      persistState();
+      closeAllergenModal();
+      renderAll();
+      showToast(`🚨 Alerta de Alérgeno ${activeAllergenModalType} activada en vivo`);
+    });
+
+    document.getElementById("verifyAllergenCleanBtn").addEventListener("click", () => {
+      if (!activeAllergenModalType) return;
+      const w = ensureCurrentWeekData();
+      w.allergens[activeAllergenModalType] = {
+        status: "VERIFIED",
+        time: document.getElementById("allergenTimeInput").value,
+        resp: document.getElementById("allergenRespInput").value.trim() || w.sanitizer || w.operator || "Operador"
+      };
+      persistState();
+      closeAllergenModal();
+      renderAll();
+      showToast(`✔ Limpieza POES ${activeAllergenModalType} confirmada`);
+    });
+
+    document.getElementById("closeAllergenModalBtn").addEventListener("click", closeAllergenModal);
+
+    // Botón maestro Copiar Día Anterior
+    document.getElementById("btnCopyAllPreviousDay").addEventListener("click", copyAllFromPreviousDay);
+
+    // Filtro de búsqueda
+    document.getElementById("searchMaterialInput").addEventListener("input", (e) => {
+      appState.filterText = e.target.value;
+      renderAll();
+    });
+
+    // Opciones de Cernido en Modal
+    document.querySelectorAll(".sift-option-btn").forEach((btn) => {
+      btn.addEventListener("click", () => setSiftingUIState(btn.dataset.sift));
+    });
+
+    document.getElementById("chkLotChange").addEventListener("change", (e) => toggleLot2UI(e.target.checked));
+
+    // Guardar Modal de Edición
+    document.getElementById("cellEditForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+      if (!activeEditContext) return;
+      const { matIdx, dayIdx } = activeEditContext;
+      const w = ensureCurrentWeekData();
+      const matObj = appState.customMaterials[matIdx];
+      const hasChange = document.getElementById("chkLotChange").checked;
+      const lot1 = document.getElementById("inputLot1").value.trim().toUpperCase();
+      const lot2 = hasChange ? document.getElementById("inputLot2").value.trim().toUpperCase() : "";
+      const recDate = document.getElementById("inputReceptionDate").value;
+      const recDate2 = hasChange ? document.getElementById("inputReceptionDate2").value : "";
+
+      w.records[`${matIdx}_${dayIdx}`] = {
+        receptionDate: recDate,
+        lot1: lot1,
+        hasChange: hasChange,
+        lot2: lot2,
+        receptionDate2: recDate2,
+        siftStatus: currentSiftState,
+        findingType: currentSiftState === "HALLAZGO" ? document.getElementById("inputFindingType").value : "",
+        findingAction: currentSiftState === "HALLAZGO" ? document.getElementById("inputFindingAction").value.trim() : ""
+      };
+
+      // Si es materia prima alergénica (ej. LECHE) y no está verificada, activar alerta automática
+      if (matObj && matObj.allergen && w.allergens[matObj.allergen]?.status === "NONE") {
+        w.allergens[matObj.allergen].status = "ACTIVE";
+      }
+
+      // Propagar al resto de la semana si el operador marcó la casilla
+      if (document.getElementById("chkPropagateWeek").checked) {
+        const finalLot = (hasChange && lot2) ? lot2 : lot1;
+        const finalRecDate = (hasChange && recDate2) ? recDate2 : recDate;
+        for (let d = dayIdx + 1; d < 7; d++) {
+          w.records[`${matIdx}_${d}`] = {
+            receptionDate: finalRecDate,
+            lot1: finalLot,
+            hasChange: false,
+            lot2: "",
+            receptionDate2: "",
+            siftStatus: "OK",
+            findingType: "",
+            findingAction: ""
+          };
+        }
+      }
+
+      persistState();
+      closeEditModal();
+      renderAll();
+      showToast(currentSiftState === "HALLAZGO"
+        ? "⚠ Hallazgo de cernido registrado y notificado a Calidad"
+        : `✔ Registro guardado: ${matObj.name}`);
+    });
+
+    document.getElementById("deleteCellBtn").addEventListener("click", () => {
+      if (!activeEditContext) return;
+      const { matIdx, dayIdx } = activeEditContext;
+      delete ensureCurrentWeekData().records[`${matIdx}_${dayIdx}`];
+      persistState();
+      closeEditModal();
+      renderAll();
+      showToast("Registro eliminado");
+    });
+
+    document.getElementById("closeModalBtn").addEventListener("click", closeEditModal);
+    document.getElementById("cancelModalBtn").addEventListener("click", closeEditModal);
+
+    // Agregar Ingrediente
+    document.getElementById("openAddIngredientBtn").addEventListener("click", () => {
+      document.getElementById("newIngredientName").value = "";
+      document.getElementById("newIngredientAllergen").value = "";
+      document.getElementById("addIngredientBackdrop").classList.add("open");
+    });
+    document.getElementById("closeAddIngBtn").addEventListener("click", () => document.getElementById("addIngredientBackdrop").classList.remove("open"));
+    document.getElementById("cancelAddIngBtn").addEventListener("click", () => document.getElementById("addIngredientBackdrop").classList.remove("open"));
+    document.getElementById("addIngredientForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const name = document.getElementById("newIngredientName").value.trim().toUpperCase();
+      const allergen = document.getElementById("newIngredientAllergen").value;
+      if (!name) return;
+      appState.customMaterials.push({ name, allergen });
+      persistState();
+      document.getElementById("addIngredientBackdrop").classList.remove("open");
+      renderAll();
+      showToast(`Ingrediente "${name}" agregado`);
+    });
+
+    // Configuración Nube / Google Sites
+    document.getElementById("openCloudConfigBtn").addEventListener("click", () => {
+      const cfg = getCloudConfig();
+      document.getElementById("firebaseConfigTextarea").value = cfg.firebaseConfigStr || "";
+      document.getElementById("gasWebhookInput").value = cfg.gasWebhookUrl || "";
+      const currentUrl = window.location.href.startsWith("http") ? window.location.href : "https://su-dominio-kw-tortilleria.web.app";
+      document.getElementById("googleSitesIframeCode").textContent =
+        `<iframe src="${currentUrl}" width="100%" height="940" frameborder="0" style="border:none; border-radius:8px;" allowfullscreen></iframe>`;
+      document.getElementById("cloudModalBackdrop").classList.add("open");
+    });
+    document.getElementById("closeCloudModalBtn").addEventListener("click", () => document.getElementById("cloudModalBackdrop").classList.remove("open"));
+    document.getElementById("cancelCloudModalBtn").addEventListener("click", () => document.getElementById("cloudModalBackdrop").classList.remove("open"));
+
+    document.getElementById("copyIframeCodeBtn").addEventListener("click", () => {
+      const txt = document.getElementById("googleSitesIframeCode").textContent;
+      const ta = document.createElement("textarea");
+      ta.value = txt;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand("copy");
+      document.body.removeChild(ta);
+      showToast("Código Embed copiado para Google Sites");
+    });
+
+    document.getElementById("saveCloudConfigBtn").addEventListener("click", () => {
+      const cfg = {
+        firebaseConfigStr: document.getElementById("firebaseConfigTextarea").value.trim(),
+        gasWebhookUrl: document.getElementById("gasWebhookInput").value.trim()
+      };
+      localStorage.setItem(CLOUD_CFG_KEY, JSON.stringify(cfg));
+      document.getElementById("cloudModalBackdrop").classList.remove("open");
+      initRealtimeCloud();
+      showToast("Configuración de nube guardada");
+    });
+
+    // Compartir Reporte con Oficina de Calidad
+    document.getElementById("openQualityReportBtn").addEventListener("click", () => {
+      document.getElementById("qualityExecutiveSummary").value = buildExecutiveQualitySummary();
+      document.getElementById("qualityReportBackdrop").classList.add("open");
+    });
+    document.getElementById("closeQualityReportBtn").addEventListener("click", () => document.getElementById("qualityReportBackdrop").classList.remove("open"));
+    document.getElementById("doneQualityReportBtn").addEventListener("click", () => document.getElementById("qualityReportBackdrop").classList.remove("open"));
+
+    document.getElementById("copyQualitySummaryBtn").addEventListener("click", () => {
+      const ta = document.getElementById("qualityExecutiveSummary");
+      ta.select();
+      document.execCommand("copy");
+      showToast("Resumen copiado para Oficina de Calidad");
+    });
+
+    document.getElementById("sendWhatsAppQualityBtn").addEventListener("click", () => {
+      const text = encodeURIComponent(document.getElementById("qualityExecutiveSummary").value);
+      window.open(`https://wa.me/?text=${text}`, "_blank", "noopener");
+    });
+
+    // Exportar CSV / Imprimir / Limpiar Semana
+    document.getElementById("exportCsvBtn").addEventListener("click", downloadCSV);
+    document.getElementById("printPdfBtn").addEventListener("click", () => window.print());
+
+    document.getElementById("resetWeekBtn").addEventListener("click", () => {
+      document.getElementById("confirmMessageText").textContent =
+        "¿Desea limpiar todos los registros de lotes, cernido y alertas de la semana actual?";
+      pendingConfirmCallback = () => {
+        delete appState.weeks[appState.weekStartISO];
+        ensureCurrentWeekData();
+        persistState();
+        renderAll();
+        showToast("Semana reiniciada");
+      };
+      document.getElementById("confirmModalBackdrop").classList.add("open");
+    });
+
+    document.getElementById("confirmCancelBtn").addEventListener("click", () => {
+      document.getElementById("confirmModalBackdrop").classList.remove("open");
+    });
+    document.getElementById("confirmOkBtn").addEventListener("click", () => {
+      if (typeof pendingConfirmCallback === "function") pendingConfirmCallback();
+      document.getElementById("confirmModalBackdrop").classList.remove("open");
+    });
+  }
+
+  // 15. INICIALIZACIÓN
+  window.addEventListener("DOMContentLoaded", () => {
+    loadLocalState();
+    bindEvents();
+    renderAll();
+    initRealtimeCloud();
+  });
+</script>
+</body>
+</html>
